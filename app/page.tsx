@@ -40,6 +40,10 @@ export default function LandingPage() {
   const wppLink = "https://wa.me/82993919961";
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // next/image não prefixa o src com o basePath quando images.unoptimized
+  // está ativo (necessário para exportar estático no GitHub Pages).
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
   const WhatsAppIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
     <svg
       viewBox="0 0 24 24"
@@ -55,14 +59,14 @@ export default function LandingPage() {
     dashboard: {
       label: "Dashboard",
       url: "gbclock.vercel.app/dashboard",
-      image: "/dashboard-preview.png",
+      image: `${basePath}/dashboard-preview.png`,
       alt: "Painel de indicadores do GBClock mostrando banco de horas em tempo real",
       caption: "Visão geral do banco de horas, atualizada em tempo real.",
     },
     escala: {
       label: "Escala de Turnos",
       url: "gbclock.vercel.app/escala",
-      image: "/escala-preview.png",
+      image: `${basePath}/escala-preview.png`,
       alt: "Escala mensal de turnos do GBClock organizada por cargo",
       caption: "Escala mensal por turno, organizada e pronta para imprimir.",
     },
@@ -79,7 +83,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center">
             <Image
-              src={darkMode ? "/logo-gb-dark.png" : "/logo-gb-light.png"}
+              src={
+                darkMode
+                  ? `${basePath}/logo-gb-dark.png`
+                  : `${basePath}/logo-gb-light.png`
+              }
               alt="GB Company Logo"
               width={180}
               height={50}
@@ -648,7 +656,7 @@ export default function LandingPage() {
                   }`}
                 >
                   <Image
-                    src="/ftamilagres.png"
+                    src={`${basePath}/ftamilagres.png`}
                     alt="Preview FTA Milagres"
                     fill
                     className="object-cover object-top"
@@ -704,7 +712,7 @@ export default function LandingPage() {
                   }`}
                 >
                   <Image
-                    src="/levijordahomecare.png"
+                    src={`${basePath}/levijordahomecare.png`}
                     alt="Preview Levi Jorda"
                     fill
                     className="object-cover object-top"

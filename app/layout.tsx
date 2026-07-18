@@ -12,15 +12,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// next/image e os links de <head> não prefixam automaticamente o basePath
+// quando images.unoptimized está ativo (necessário para o GitHub Pages).
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export const metadata: Metadata = {
   title: "GB Company",
   description: "Soluções de software personalizadas para o seu negócio",
   icons: {
     icon: [
-      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
+      { url: `${basePath}/favicon.png`, sizes: "32x32", type: "image/png" },
+      { url: `${basePath}/favicon.png`, sizes: "16x16", type: "image/png" },
     ],
-    apple: { url: "/favicon.png", sizes: "180x180", type: "image/png" },
+    apple: { url: `${basePath}/favicon.png`, sizes: "180x180", type: "image/png" },
   },
 };
 
