@@ -1,973 +1,1442 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import {
-  Smartphone,
-  Globe,
-  ShieldCheck,
-  Database,
-  Zap,
-  ArrowUpRight,
-  MessageSquare,
-  Sun,
-  Moon,
-  Monitor,
-  HomeIcon,
-  Wrench,
-  CheckCircle2,
-  Clock,
-  Users,
-  CalendarDays,
-  LayoutDashboard,
-  TrendingUp,
-  DollarSign,
-  BarChart3,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-export default function LandingPage() {
-  const [darkMode, setDarkMode] = useState(true);
 
-  // Estado para controlar qual projeto está "ativo" (sem desfoque) no portfólio
-  const [activeProject, setActiveProject] = useState<string | null>(null);
 
-  // Estado para a aba ativa da vitrine do GBClock
-  const [gbclockView, setGbclockView] = useState<"dashboard" | "escala">(
-    "dashboard",
-  );
+const bp = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const A = (f: string) => `${bp}/figma/${f}`;
+const WPP = "https://wa.me/82993919961";
 
-  const toggleTheme = () => setDarkMode(!darkMode);
-  const wppLink = "https://wa.me/82993919961";
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const CANVAS_W = 1920;
 
-  // next/image não prefixa o src com o basePath quando images.unoptimized
-  // está ativo (necessário para exportar estático no GitHub Pages).
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+/* fator global de tipografia — reduz todas as fontes de uma vez */
+const FS = 0.78;
+const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
-  const WhatsAppIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
+const HOME_H = 1083;
+const SERV_H = 1083;
+const BRIEF_H = 900;
+const PROD_H = 1083;
+const FECH_H = 760;
+const FOOT_H = 289;
+const CANVAS_H = HOME_H + SERV_H + BRIEF_H + PROD_H + FECH_H + FOOT_H; // 5198
+
+/* --- WhatsApp glyph ------------------------------------------------ */
+function Wpp({ size = 24, color = "currentColor" }: { size?: number; color?: string }) {
+  return (
     <svg
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
-      fill="currentColor"
-      className={className}
+      fill={color}
       xmlns="http://www.w3.org/2000/svg"
+      style={{ display: "block" }}
     >
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
   );
+}
 
-  const gbclockContent = {
-    dashboard: {
-      label: "Dashboard",
-      url: "gbclock.vercel.app/dashboard",
-      image: `${basePath}/dashboard-preview.png`,
-      alt: "Painel de indicadores do GBClock mostrando banco de horas em tempo real",
-      caption: "Visão geral do banco de horas, atualizada em tempo real.",
-    },
-    escala: {
-      label: "Escala de Turnos",
-      url: "gbclock.vercel.app/escala",
-      image: `${basePath}/escala-preview.png`,
-      alt: "Escala mensal de turnos do GBClock organizada por cargo",
-      caption: "Escala mensal por turno, organizada e pronta para imprimir.",
-    },
-  } as const;
+/* --- Faixa de código (Frame 4) ----------------------------------- */
+type Tok = { t: string; l: number; y: number; s: number; o: number; c: string; b?: boolean };
+const TOKENS: Tok[] = [
+  { t: "{ }", l: 30, y: 27, s: 28, o: 0.2, c: "#8d57f8", b: true },
+  { t: "const dev = () => {", l: 150, y: 13.5, s: 14, o: 0.15, c: "#8d57f8" },
+  { t: "[ ]", l: 350, y: 69.5, s: 32, o: 0.2, c: "#56b6c2", b: true },
+  { t: "</>", l: 480, y: 30.5, s: 26, o: 0.18, c: "#e06c75", b: true },
+  { t: "function()", l: 560, y: 62.5, s: 12, o: 0.13, c: "#61afef" },
+  { t: "{ code }", l: 700, y: 20, s: 20, o: 0.2, c: "#8d57f8" },
+  { t: "if (true) {", l: 830, y: 58, s: 13, o: 0.15, c: "#8d57f8" },
+  { t: "< / >", l: 960, y: 38, s: 30, o: 0.2, c: "#e06c75" },
+  { t: "[ ... ]", l: 1080, y: 66, s: 18, o: 0.18, c: "#56b6c2" },
+  { t: "return { };", l: 1180, y: 18.5, s: 14, o: 0.15, c: "#8d57f8" },
+  { t: "{ => }", l: 1320, y: 62.5, s: 24, o: 0.2, c: "#8d57f8" },
+  { t: "import { }", l: 1440, y: 16, s: 13, o: 0.13, c: "#8d57f8" },
+  { t: "( )", l: 1550, y: 72, s: 28, o: 0.2, c: "#61afef", b: true },
+  { t: "export default", l: 1620, y: 25.5, s: 12, o: 0.13, c: "#8d57f8" },
+  { t: "{ [ ] }", l: 1770, y: 58.5, s: 22, o: 0.2, c: "#8d57f8" },
+  { t: "&&", l: 90, y: 67, s: 20, o: 0.15, c: "#56b6c2", b: true },
+  { t: "===", l: 250, y: 41, s: 18, o: 0.18, c: "#56b6c2", b: true },
+  { t: "// dev", l: 420, y: 46.5, s: 11, o: 0.13, c: "#98c379" },
+  { t: "=>", l: 650, y: 59.5, s: 24, o: 0.2, c: "#56b6c2", b: true },
+  { t: "{ ... }", l: 1850, y: 21.5, s: 16, o: 0.18, c: "#8d57f8" },
+  { t: "#!/bin", l: 1000, y: 11.5, s: 11, o: 0.1, c: "#98c379" },
+  { t: "npm run", l: 1250, y: 66.5, s: 11, o: 0.1, c: "#e5c07b" },
+  { t: "<<", l: 50, y: 47.5, s: 16, o: 0.15, c: "#56b6c2", b: true },
+  { t: ">>", l: 1900, y: 74.5, s: 16, o: 0.15, c: "#56b6c2", b: true },
+  { t: "/* */", l: 770, y: 68.5, s: 14, o: 0.13, c: "#98c379" },
+];
+
+function CodeStrip({ top }: { top: number }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        top,
+        width: CANVAS_W,
+        height: 96,
+        background: "#d2d3da",
+        overflow: "hidden",
+      }}
+    >
+      {TOKENS.map((k, i) => (
+        <span
+          key={i}
+          style={{
+            position: "absolute",
+            left: k.l,
+            top: k.y,
+            transform: "translateY(-50%)",
+            fontSize: k.s,
+            fontWeight: k.b ? 700 : 400,
+            color: k.c,
+            opacity: k.o,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {k.t}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* --- Monitor genérico (hover Landing Pages / SaaS em Serviços) ---- */
+function GenericMonitor({ variant }: { variant: "landing" | "saas" }) {
+  const bar = (w: string, h = 10, c = "#e2e0f4") => (
+    <div style={{ width: w, height: h, borderRadius: 6, background: c }} />
+  );
+  return (
+    <div style={{ width: 620, display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div
+        style={{
+          width: 620,
+          height: 388,
+          borderRadius: 18,
+          border: "12px solid #1e1b2e",
+          background: "#ffffff",
+          overflow: "hidden",
+          boxShadow: "0 40px 80px -20px rgba(24,20,46,.45)",
+        }}
+      >
+        {/* browser chrome */}
+        <div
+          style={{
+            height: 34,
+            background: "#f1eefb",
+            display: "flex",
+            alignItems: "center",
+            gap: 7,
+            padding: "0 14px",
+          }}
+        >
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: "#ff5f57" }} />
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: "#febc2e" }} />
+          <span style={{ width: 10, height: 10, borderRadius: 999, background: "#28c840" }} />
+          <div
+            style={{
+              marginLeft: 12,
+              flex: 1,
+              height: 16,
+              borderRadius: 999,
+              background: "#e2ddf5",
+            }}
+          />
+        </div>
+
+        {variant === "landing" ? (
+          <div style={{ padding: 22 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ width: 34, height: 34, borderRadius: 10, background: "#8d57f8" }} />
+              <div style={{ display: "flex", gap: 14 }}>
+                {bar("46px", 8)}
+                {bar("46px", 8)}
+                {bar("46px", 8)}
+              </div>
+            </div>
+            <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 12 }}>
+              {bar("62%", 22, "#c9bef0")}
+              {bar("48%", 14)}
+              {bar("40%", 14)}
+              <div
+                style={{
+                  marginTop: 8,
+                  width: 150,
+                  height: 34,
+                  borderRadius: 999,
+                  background: "#8d57f8",
+                }}
+              />
+            </div>
+            <div style={{ marginTop: 26, display: "flex", gap: 16 }}>
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    flex: 1,
+                    height: 96,
+                    borderRadius: 12,
+                    background: "#f4f1fc",
+                    border: "1px solid #e7e1f8",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: "flex", height: "calc(100% - 34px)" }}>
+            <div style={{ width: 120, background: "#f1eefb", padding: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+              <div style={{ width: 30, height: 30, borderRadius: 9, background: "#8d57f8" }} />
+              {Array.from({ length: 5 }).map((_, i) => (
+                <React.Fragment key={i}>{bar("80%", 9)}</React.Fragment>
+              ))}
+            </div>
+            <div style={{ flex: 1, padding: 22 }}>
+              {bar("40%", 18, "#c9bef0")}
+              <div style={{ marginTop: 18, display: "flex", gap: 14 }}>
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} style={{ flex: 1, height: 62, borderRadius: 10, background: "#f4f1fc", border: "1px solid #e7e1f8" }} />
+                ))}
+              </div>
+              <div style={{ marginTop: 18, height: 150, borderRadius: 12, background: "#f4f1fc", border: "1px solid #e7e1f8", display: "flex", alignItems: "flex-end", gap: 10, padding: 16 }}>
+                {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                  <div key={i} style={{ flex: 1, height: `${h}%`, borderRadius: 4, background: "#8d57f8", opacity: 0.35 + i * 0.09 }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{ width: 90, height: 44, background: "linear-gradient(#d9d6e6,#b9b5c9)" }} />
+      <div style={{ width: 260, height: 16, borderRadius: 8, background: "#c4c0d4" }} />
+    </div>
+  );
+}
+
+/* ================================================================= *
+ *  PÁGINA                                                            *
+ * ================================================================= */
+export default function Page() {
+  const [servTab, setServTab] = useState<"mobile" | "webapp" | "desktop" | "landing" | "saas">("webapp");
+  const [prodTab, setProdTab] = useState<"finance" | "lucena">("finance");
+
+  // sub-opções de "Software sob medida" (Mobile / Web App / Desktop)
+  const [showSub, setShowSub] = useState(false);
+  const subTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSoftware = React.useRef<"mobile" | "webapp" | "desktop">("webapp");
+  const openSub = React.useCallback(() => {
+    if (subTimer.current) clearTimeout(subTimer.current);
+    setShowSub(true);
+  }, []);
+  const closeSub = React.useCallback(() => {
+    if (subTimer.current) clearTimeout(subTimer.current);
+    subTimer.current = setTimeout(() => setShowSub(false), 320);
+  }, []);
+  const closeSubNow = React.useCallback(() => {
+    if (subTimer.current) clearTimeout(subTimer.current);
+    setShowSub(false);
+  }, []);
+  const pickServ = React.useCallback((t: typeof servTab) => {
+    if (t === "mobile" || t === "webapp" || t === "desktop") lastSoftware.current = t;
+    setServTab(t);
+  }, []);
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    const s = q.get("serv");
+    const p = q.get("prod");
+    if (s === "mobile" || s === "webapp" || s === "desktop" || s === "landing" || s === "saas") setServTab(s);
+    if (p === "finance" || p === "lucena") setProdTab(p);
+  }, []);
+
+  // rede de segurança: garante que a página apareça mesmo se o "load" demorar
+  useEffect(() => {
+    const reveal = () => document.documentElement.setAttribute("data-ready", "1");
+    if (document.readyState === "complete") reveal();
+    else window.addEventListener("load", reveal);
+    const t = setTimeout(reveal, 6000);
+    return () => {
+      window.removeEventListener("load", reveal);
+      clearTimeout(t);
+    };
+  }, []);
+
+  return (
+    <div className="figma-outer" style={{ ["--canvas-h" as string]: `${CANVAS_H}px` } as React.CSSProperties}>
+      <div className="figma-viewport">
+        <div className="figma-canvas">
+        {/* ============================= HOME ============================= */}
+        <HomeScene />
+
+        {/* =========================== SERVIÇOS =========================== */}
+        <section
+          id="servicos"
+          style={{ position: "absolute", left: 0, top: HOME_H, width: CANVAS_W, height: SERV_H, background: "rgba(0,14,82,0.12)", overflow: "hidden" }}
+        >
+          <img
+            src={A("servicos-bg.png")}
+            alt=""
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, pointerEvents: "none" }}
+          />
+
+          <h2 style={{ position: "absolute", left: 120, top: 83, width: 856, margin: 0, fontSize: fs(64), fontWeight: 700, color: "#000" }}>
+            Nossos principais serviços
+          </h2>
+          <p style={{ position: "absolute", left: 123, top: 197, width: 1023, margin: 0, fontSize: fs(24), fontWeight: 700, color: "#000" }}>
+            Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
+          </p>
+
+          {/* Showcase + sub-abas (troca conforme o hover nos pills) */}
+          <ServiceShowcase
+            tab={servTab}
+            showSub={showSub}
+            setTab={pickServ}
+            onEnter={openSub}
+            onLeave={closeSub}
+          />
+
+          {/* Painel roxo */}
+          <div
+            style={{
+              position: "absolute",
+              left: -120,
+              top: 300,
+              width: 720,
+              height: 452,
+              borderRadius: 80,
+              background: "#8d57f8",
+              overflow: "hidden",
+            }}
+          >
+            {/* Texto — centralizado (v + h) na parte visível do card */}
+            <div
+              style={{
+                position: "absolute",
+                left: 120,
+                right: 0,
+                top: 0,
+                height: 356,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0 54px",
+              }}
+            >
+              <p
+                key={servTab}
+                className="anim-fade"
+                style={{ margin: 0, textAlign: "center", fontSize: fs(28), lineHeight: 1.34, fontWeight: 700, color: "#fff" }}
+              >
+                {SERVICE_TEXT[servTab]}
+              </p>
+            </div>
+
+            {/* Barra branca + título centralizado */}
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 96,
+                background: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingLeft: 120,
+              }}
+            >
+              <p style={{ margin: 0, textAlign: "center", fontSize: fs(36), fontWeight: 700, color: "#000", whiteSpace: "nowrap" }}>
+                {SERVICE_PILL_TITLE[servTab]}
+              </p>
+            </div>
+          </div>
+
+          {/* Pills / abas */}
+          <ServicePills
+            tab={servTab}
+            setTab={pickServ}
+            lastSoftware={lastSoftware}
+            onSoftwareEnter={openSub}
+            onSoftwareLeave={closeSub}
+            onOtherEnter={closeSubNow}
+          />
+        </section>
+
+        {/* =========================== BRIEFING =========================== */}
+        <section
+          id="briefing"
+          style={{ position: "absolute", left: 0, top: HOME_H + SERV_H, width: CANVAS_W, height: BRIEF_H, background: "#f4f1fc", overflow: "hidden" }}
+        >
+          {/* Círculo decorativo atrás da cena */}
+          <div
+            style={{
+              position: "absolute",
+              left: 1120,
+              top: -160,
+              width: 900,
+              height: 900,
+              borderRadius: "50%",
+              background: "#8d57f8",
+              opacity: 0.12,
+              pointerEvents: "none",
+            }}
+          />
+
+          {/* Eyebrow */}
+          <div
+            style={{
+              position: "absolute",
+              left: 120,
+              top: 150,
+              background: "#fff",
+              borderRadius: 100,
+              padding: "12px 28px",
+              fontSize: fs(22),
+              fontWeight: 700,
+              fontStyle: "italic",
+              color: "#8d57f8",
+              boxShadow: "0 12px 30px -14px rgba(141,87,248,.4)",
+            }}
+          >
+            Briefing
+          </div>
+
+          {/* Título */}
+          <h2 style={{ position: "absolute", left: 120, top: 232, width: 820, margin: 0, fontSize: fs(56), lineHeight: 1.12, fontWeight: 700, color: "#000" }}>
+            Entendemos o seu problema e entregamos a solução
+          </h2>
+
+          {/* Texto */}
+          <p style={{ position: "absolute", left: 123, top: 468, width: 760, margin: 0, fontSize: fs(24), lineHeight: 1.45, fontWeight: 700, color: "#6c6969" }}>
+            A GB Company faz o briefing do que a sua empresa precisa, mergulha no seu problema e resolve com um sistema sob medida — feito para atender exatamente às suas exigências.
+          </p>
+
+          {/* CTA WhatsApp */}
+          <a
+            href={WPP}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              position: "absolute",
+              left: 123,
+              top: 656,
+              width: 389,
+              height: 77,
+              borderRadius: 10,
+              background: "#8d57f8",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 18,
+              textDecoration: "none",
+              fontSize: fs(24),
+              fontWeight: 700,
+              color: "#ffffff",
+              transition: "transform .2s, box-shadow .2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 18px 40px -12px rgba(141,87,248,.55)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "none";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          >
+            Chamar no WhatsApp
+            <Wpp size={30} color="#ffffff" />
+          </a>
+
+          {/* Foto: reunião de briefing da GB Company */}
+          <div
+            style={{
+              position: "absolute",
+              left: 1000,
+              top: 208,
+              width: 850,
+              height: 478,
+              borderRadius: 28,
+              overflow: "hidden",
+              background: "#e9e3fb",
+              boxShadow: "0 50px 90px -30px rgba(24,20,46,.4)",
+            }}
+          >
+            <img
+              src={A("briefing.png")}
+              alt="Equipe da GB Company em reunião de briefing com clientes"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </div>
+        </section>
+
+        {/* =========================== PRODUTOS =========================== */}
+        <section
+          id="produtos"
+          style={{
+            position: "absolute",
+            left: 0,
+            top: HOME_H + SERV_H + BRIEF_H,
+            width: CANVAS_W,
+            height: PROD_H,
+            background: prodTab === "finance" ? "#171e57" : "#290002",
+            overflow: "hidden",
+            transition: "background .4s",
+          }}
+        >
+          <img
+            src={A("produtos-bg.png")}
+            alt=""
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, pointerEvents: "none" }}
+          />
+
+          <h2 style={{ position: "absolute", left: 83, top: 78, width: 856, margin: 0, fontSize: fs(64), fontWeight: 700, color: "#fff" }}>
+            Produtos gbcompany
+          </h2>
+
+          {/* Mockups */}
+          <ProductShowcase tab={prodTab} />
+
+          {/* Painel branco — mesmo tamanho do card de Serviços */}
+          <div
+            style={{
+              position: "absolute",
+              left: -120,
+              top: 300,
+              width: 720,
+              height: 452,
+              borderRadius: 80,
+              background: "#fff",
+              overflow: "hidden",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: 120,
+                right: 0,
+                top: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0 56px",
+              }}
+            >
+              <p
+                key={prodTab}
+                className="anim-fade"
+                style={{
+                  margin: 0,
+                  textAlign: "center",
+                  fontSize: fs(23),
+                  lineHeight: 1.4,
+                  fontWeight: 700,
+                  color: prodTab === "finance" ? "#171e57" : "#000",
+                }}
+              >
+                {prodTab === "finance"
+                  ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
+                  : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
+              </p>
+            </div>
+          </div>
+
+          {/* Pills / abas */}
+          <ProductPills tab={prodTab} setTab={setProdTab} />
+        </section>
+
+        {/* ========================== FECHAMENTO ========================= */}
+        <section
+          style={{
+            position: "absolute",
+            left: 0,
+            top: HOME_H + SERV_H + BRIEF_H + PROD_H,
+            width: CANVAS_W,
+            height: FECH_H,
+            background: "#8d57f8",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 32,
+          }}
+        >
+          <span
+            style={{
+              position: "absolute",
+              left: 1500,
+              top: 60,
+              fontSize: fs(480),
+              fontWeight: 700,
+              lineHeight: 1,
+              color: "rgba(255,255,255,0.08)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {"}"}
+          </span>
+
+          <div style={{ background: "#fff", borderRadius: 100, padding: "14px 28px", position: "relative" }}>
+            <span style={{ fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#8d57f8" }}>Fale conosco</span>
+          </div>
+          <p style={{ width: 1300, margin: 0, textAlign: "center", fontSize: fs(48), fontWeight: 700, color: "#fff", position: "relative" }}>
+            Ajudamos a sua empresas a alavancar os números com sistemas inteligentes.
+          </p>
+          <a
+            href={WPP}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "#fff",
+              borderRadius: 16,
+              padding: "26px 48px",
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              textDecoration: "none",
+              position: "relative",
+            }}
+          >
+            <Wpp size={32} color="#8d57f8" />
+            <span style={{ fontSize: fs(28), fontWeight: 700, color: "#8d57f8" }}>Chamar no WhatsApp</span>
+          </a>
+        </section>
+
+        {/* ============================ FOOTER =========================== */}
+        <footer
+          style={{
+            position: "absolute",
+            left: 0,
+            top: HOME_H + SERV_H + BRIEF_H + PROD_H + FECH_H,
+            width: CANVAS_W,
+            height: FOOT_H,
+            background: "#fff",
+            overflow: "hidden",
+          }}
+        >
+          <img src={A("logo.png")} alt="GB Company" style={{ position: "absolute", left: 125, top: 81, width: 90, height: 90 }} />
+          <p style={{ position: "absolute", left: 73, top: 208, width: 194, margin: 0, fontSize: fs(24), fontWeight: 700, color: "#6c6969" }}>
+            Copyright 2026
+          </p>
+          <p style={{ position: "absolute", left: 594, top: 117, width: 731, margin: 0, fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#000", textAlign: "center" }}>
+            &quot;Falou-lhes, pois, Jesus outra vez, dizendo: Eu sou a luz do mundo; quem me segue não andará em trevas, mas terá a luz da vida&quot;.
+          </p>
+          <p style={{ position: "absolute", left: 594, top: 201, width: 731, margin: 0, fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#5672f8", textAlign: "center" }}>
+            João 8:12
+          </p>
+
+          {/* Redes */}
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ position: "absolute", left: 1561, top: 121, width: 48, height: 48, color: "#8d57f8" }}>
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="2" width="20" height="20" rx="5.5" />
+              <circle cx="12" cy="12" r="4.2" />
+              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a href={`mailto:${"gbcompanyltda@gmail.com"}`} aria-label="E-mail" style={{ position: "absolute", left: 1638, top: 121, width: 48, height: 48, color: "#8d57f8" }}>
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+              <path d="M3 6l9 6 9-6" />
+            </svg>
+          </a>
+          <a href={WPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" style={{ position: "absolute", left: 1714, top: 120, width: 48, height: 48, color: "#000" }}>
+            <Wpp size={48} color="#000" />
+          </a>
+        </footer>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================= *
+ *  Textos das abas de Serviços                                       *
+ * ================================================================= */
+const SERVICE_TEXT: Record<string, string> = {
+  webapp:
+    "Desenvolvemos soluções digitais personalizadas para as necessidades do seu negócio — de sistemas web e aplicativos mobile a plataformas completas",
+  mobile:
+    "Aplicativos móveis nativos para iOS e Android — rápidos, offline-first e prontos para escalar junto com o seu negócio.",
+  desktop:
+    "Sistemas desktop robustos para operações internas, integrações e automações que o navegador não alcança.",
+  landing:
+    "Landing pages de alta conversão: carregamento instantâneo, SEO afiado e um design sob medida para transformar visitantes em clientes.",
+  saas:
+    "Plataformas SaaS completas: multiusuário, cobrança recorrente, painéis administrativos e escalabilidade na nuvem — do MVP ao produto maduro.",
+};
+const SERVICE_PILL_TITLE: Record<string, string> = {
+  webapp: "Software sob medida",
+  mobile: "Software sob medida",
+  desktop: "Software sob medida",
+  landing: "Landing Pages",
+  saas: "SaaS",
+};
+
+/* --- Case real de Landing Page (Levi Jorda Home Care) ---------- */
+function LandingCase() {
+  return (
+    <div style={{ width: 880, display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* só o monitor + o celular, sem caixa (PNG com fundo recortado) */}
+      <img
+        src={`${bp}/levijorda-devices.png`}
+        alt="Landing page da Levi Jorda Home Care desenvolvida pela GB Company"
+        style={{ display: "block", width: "100%" }}
+      />
+      <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 8 }}>
+        <span style={{ width: 11, height: 11, borderRadius: 999, background: "#28c840" }} />
+        <span style={{ fontSize: fs(22), fontWeight: 700, color: "#000" }}>
+          Case entregue pela GB Company — Levi Jorda Home Care
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* --- Monitor desktop com a tela "Seu projeto aqui" ------------- */
+function DesktopMockup() {
+  return (
+    <div style={{ width: 640, display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <div
+        style={{
+          width: 640,
+          borderRadius: 18,
+          border: "14px solid #1e1b2e",
+          background: "#fff",
+          overflow: "hidden",
+          boxShadow: "0 40px 80px -20px rgba(24,20,46,.45)",
+        }}
+      >
+        <img src={A("servicos-screen.png")} alt="Seu projeto aqui" style={{ display: "block", width: "100%" }} />
+      </div>
+      {/* pé do monitor */}
+      <div style={{ width: 84, height: 42, background: "linear-gradient(#d9d6e6,#b9b5c9)" }} />
+      <div style={{ width: 280, height: 16, borderRadius: 9, background: "#c4c0d4" }} />
+    </div>
+  );
+}
+
+/* --- Sub-opções de "Software sob medida" ----------------------- */
+function ServiceSubPills({
+  show,
+  tab,
+  setTab,
+}: {
+  show: boolean;
+  tab: string;
+  setTab: (t: any) => void;
+}) {
+  const sub: React.CSSProperties = {
+    height: 46,
+    borderRadius: 100,
+    fontSize: fs(21),
+    fontWeight: 700,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 26px",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "transform .2s, box-shadow .2s",
+  };
+  const activeShadow = "0 12px 30px -10px rgba(0,0,0,.35)";
 
   return (
     <div
-      className={`${darkMode ? "bg-slate-950 text-slate-100" : "bg-gray-200 text-slate-900"} min-h-screen font-sans transition-colors duration-300 selection:bg-indigo-500 selection:text-white`}
+      style={{
+        display: "flex",
+        gap: 14,
+        opacity: show ? 1 : 0,
+        transform: show ? "translateY(0)" : "translateY(-10px)",
+        pointerEvents: show ? "auto" : "none",
+        transition: "opacity .22s ease, transform .22s ease",
+      }}
     >
-      {/* NAVBAR */}
-      <header
-        className={`border-b ${darkMode ? "border-slate-900 bg-slate-950/80" : "border-slate-200 bg-white/80"} sticky top-0 backdrop-blur-md z-50 transition-colors duration-300 overflow-hidden`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center">
-            <Image
-              src={
-                darkMode
-                  ? `${basePath}/logo-gb-dark.png`
-                  : `${basePath}/logo-gb-light.png`
-              }
-              alt="GB Company Logo"
-              width={180}
-              height={50}
-              priority
-              className="object-contain"
-            />
-          </div>
-
-          <nav
-            className={`hidden md:flex items-center gap-8 text-sm font-medium ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-          >
-            <a
-              className={`p-2.5 rounded-xl border transition-all duration-300 ${darkMode ? "bg-slate-900 border-slate-800 text-purple-400 hover:bg-slate-800" : "bg-slate-100 border-slate-200 text-indigo-600 hover:bg-slate-200"}`}
-              aria-label="Início"
-              href="#home"
-            >
-              <HomeIcon className="w-5 h-5 inline-block" />
-            </a>
-            <a
-              href="#servicos"
-              className={`hover:text-indigo-500 transition ${darkMode ? "hover:text-white" : "hover:text-slate-950"}`}
-            >
-              Serviços
-            </a>
-            <a
-              href="#gbclock"
-              className={`hover:text-indigo-500 transition ${darkMode ? "hover:text-white" : "hover:text-slate-950"}`}
-            >
-              GBClock
-            </a>
-            <a
-              href="#diferenciais"
-              className={`hover:text-indigo-500 transition ${darkMode ? "hover:text-white" : "hover:text-slate-950"}`}
-            >
-              Diferenciais
-            </a>
-            <a
-              href="#portfolio"
-              className={`hover:text-indigo-500 transition ${darkMode ? "hover:text-white" : "hover:text-slate-950"}`}
-            >
-              Portfólio
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleTheme}
-              className={`p-2.5 rounded-xl border transition-all duration-300 ${darkMode ? "bg-slate-900 border-slate-800 text-amber-400 hover:bg-slate-800" : "bg-slate-100 border-slate-200 text-indigo-600 hover:bg-slate-200"}`}
-              aria-label="Alternar tema"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-            <button
-              onClick={() => window.open(wppLink, "_blank")}
-              className={`p-2.5 rounded-xl border transition-all duration-300 ${darkMode ? "bg-slate-900 border-slate-800 text-green-500 hover:bg-slate-800" : "bg-slate-100 border-slate-200 text-green-500 hover:bg-slate-200"}`}
-              aria-label="Contato via WhatsApp"
-            >
-              <WhatsAppIcon className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              rel="noopener noreferrer"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-indigo-600/20"
-            >
-              Iniciar Projeto
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* HERO SECTION */}
-      <section
-        id="home"
-        className="relative overflow-hidden pt-10 pb-14 lg:pt-14 lg:pb-16 border-b border-slate-900/10"
-      >
+      {([
+        ["mobile", "Mobile", "#fff", "#000"],
+        ["webapp", "Web App", "#61afef", "#fff"],
+        ["desktop", "Desktop", "#8d57f8", "#fff"],
+      ] as const).map(([key, label, pbg, pfg]) => (
         <div
-          className={`absolute inset-0 ${darkMode ? "bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.12),transparent_50%)]" : "bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.06),transparent_50%)]"}`}
-        />
-        <div
-          className={`absolute inset-0 opacity-[0.35] ${darkMode ? "bg-[linear-gradient(to_right,rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,0.06)_1px,transparent_1px)]" : "bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)]"} bg-[size:56px_56px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_0%,black,transparent)]`}
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center lg:text-left">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            <div className="lg:col-span-6 space-y-5 animate-fade-in-up">
-              <h1
-                className={`text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold tracking-tight leading-[1.1] ${darkMode ? "text-white" : "text-slate-950"}`}
-              >
-                Transformamos processos complexos em{" "}
-                <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                  Aplicações de Alta Performance
-                </span>
-              </h1>
-              <p
-                className={`text-base sm:text-lg max-w-xl mx-auto lg:mx-0 ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                Desenvolvemos aplicativos nativos (iOS & Android), plataformas
-                SaaS e ecossistemas web sob medida. Conectamos automação
-                inteligente, segurança de dados e interfaces de alta conversão
-                para escalar o seu negócio.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
-                <a
-                  href="https://wa.me/82993919961"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-medium px-8 py-4 rounded-xl transition shadow-xl shadow-purple-900/20 flex items-center justify-center gap-2 group"
-                >
-                  Fale com um Especialista
-                  <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </a>
-                <a
-                  href="#gbclock"
-                  className={`font-medium px-8 py-4 rounded-xl transition flex items-center justify-center gap-2 border ${darkMode ? "border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-900" : "border-slate-300 hover:border-slate-400 text-slate-800 hover:bg-white"}`}
-                >
-                  Ver o GBClock em ação
-                </a>
-              </div>
-              <div
-                className={`flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start text-xs sm:text-sm pt-1 ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  Orçamento sem compromisso
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  Resposta rápida via WhatsApp
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  Atendimento direto com o desenvolvedor
-                </span>
-              </div>
-            </div>
-
-            {/* VITRINE VISUAL — Mockup de App */}
-            <div className="lg:col-span-6 relative lg:block min-h-[380px] sm:min-h-[420px] pt-6 sm:pt-4">
-              <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-500 opacity-20 blur-3xl rounded-full" />
-
-              {/* Ícone flutuante: números em alta */}
-              <div
-                className={`animate-float absolute top-0 left-0 sm:left-4 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl border shadow-lg text-xs font-bold ${darkMode ? "bg-slate-900 border-slate-800 text-emerald-400" : "bg-white border-slate-200 text-emerald-600"}`}
-              >
-                <TrendingUp className="w-4 h-4" />
-                +87%
-              </div>
-
-              {/* Ícone flutuante: cifrão */}
-              <div
-                className="animate-float-delayed absolute top-10 right-0 sm:right-6 z-20 w-11 h-11 rounded-full flex items-center justify-center shadow-lg bg-gradient-to-br from-blue-600 to-purple-600 text-white"
-              >
-                <DollarSign className="w-5 h-5" />
-              </div>
-
-              {/* Ícone flutuante: gráfico */}
-              <div
-                className={`animate-float-delayed absolute bottom-20 left-0 sm:-left-2 z-20 w-11 h-11 rounded-full flex items-center justify-center shadow-lg border ${darkMode ? "bg-slate-900 border-slate-800 text-blue-400" : "bg-white border-slate-200 text-blue-600"}`}
-              >
-                <BarChart3 className="w-5 h-5" />
-              </div>
-
-              {/* Badge: segurança */}
-              <div
-                className={`animate-float absolute bottom-2 right-0 sm:right-6 z-20 flex items-center gap-1.5 px-3 py-2 rounded-xl border shadow-lg text-xs font-semibold ${darkMode ? "bg-slate-900 border-slate-800 text-white" : "bg-white border-slate-200 text-slate-900"}`}
-              >
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                Seguro & Escalável
-              </div>
-
-              {/* CELULAR COM SKELETON DE APP */}
-              <div className="relative mx-auto w-60 sm:w-64">
-                <div
-                  className={`relative rounded-[2.2rem] border-[6px] shadow-2xl overflow-hidden ${darkMode ? "bg-slate-950 border-slate-800" : "bg-white border-slate-900"}`}
-                >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-black rounded-b-2xl z-20" />
-                  <div className="p-4 pt-7 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600" />
-                      <div className="flex gap-1.5">
-                        <div
-                          className={`w-6 h-6 rounded-lg ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                        />
-                        <div
-                          className={`w-6 h-6 rounded-lg ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div
-                        className={`h-3 w-2/3 rounded-full ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                      />
-                      <div
-                        className={`h-2 w-1/2 rounded-full ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                      />
-                    </div>
-
-                    <div className="rounded-xl p-3 bg-gradient-to-br from-blue-600 to-purple-600 space-y-2.5">
-                      <div className="h-2 w-1/3 rounded-full bg-white/40" />
-                      <div className="h-5 w-2/3 rounded-full bg-white/90" />
-                      <div className="flex items-end gap-1 h-10 pt-1">
-                        <div className="w-full bg-white/30 h-[35%] rounded-t" />
-                        <div className="w-full bg-white/50 h-[60%] rounded-t" />
-                        <div className="w-full bg-white/70 h-[85%] rounded-t" />
-                        <div className="w-full bg-white h-[55%] rounded-t" />
-                        <div className="w-full bg-white/80 h-[95%] rounded-t" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      {[
-                        { w: "w-3/4" },
-                        { w: "w-2/3" },
-                        { w: "w-1/2" },
-                      ].map((row, i) => (
-                        <div key={i} className="flex items-center gap-2.5">
-                          <div
-                            className={`w-8 h-8 rounded-lg shrink-0 ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                          />
-                          <div className="flex-1 space-y-1.5">
-                            <div
-                              className={`h-2 ${row.w} rounded-full ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                            />
-                            <div
-                              className={`h-2 w-1/3 rounded-full ${darkMode ? "bg-slate-800/60" : "bg-slate-100/60"}`}
-                            />
-                          </div>
-                          <span className="text-xs font-bold text-emerald-500">
-                            +
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div
-                      className={`flex items-center justify-around pt-3 border-t ${darkMode ? "border-slate-800" : "border-slate-100"}`}
-                    >
-                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600" />
-                      <div
-                        className={`w-6 h-6 rounded-lg ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                      />
-                      <div
-                        className={`w-6 h-6 rounded-lg ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                      />
-                      <div
-                        className={`w-6 h-6 rounded-lg ${darkMode ? "bg-slate-800" : "bg-slate-100"}`}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          key={key}
+          onMouseEnter={() => setTab(key)}
+          style={{
+            ...sub,
+            background: pbg,
+            color: pfg,
+            boxShadow: tab === key ? activeShadow : "0 6px 18px -8px rgba(0,0,0,.3)",
+            transform: tab === key ? "translateY(-3px)" : "none",
+          }}
+        >
+          {label}
         </div>
-      </section>
+      ))}
+    </div>
+  );
+}
 
-      {/* FAIXA DE CONFIANÇA */}
-      <section
-        className={`border-b py-5 ${darkMode ? "border-slate-900 bg-slate-900/20" : "border-slate-200 bg-white"}`}
+/* --- Showcase de Serviços --------------------------------------- */
+function ServiceShowcase({
+  tab,
+  showSub,
+  setTab,
+  onEnter,
+  onLeave,
+}: {
+  tab: string;
+  showSub: boolean;
+  setTab: (t: any) => void;
+  onEnter?: () => void;
+  onLeave?: () => void;
+}) {
+  if (tab === "landing") {
+    return (
+      <div key={tab} className="anim-card" style={{ position: "absolute", left: 900, top: 250, transformOrigin: "top left" }}>
+        <LandingCase />
+      </div>
+    );
+  }
+  if (tab === "saas") {
+    return (
+      <div key={tab} className="anim-card" style={{ position: "absolute", left: 940, top: 250, transformOrigin: "top left" }}>
+        <GenericMonitor variant="saas" />
+      </div>
+    );
+  }
+
+  // Software: mobile / webapp / desktop — aparelhos + sub-abas centralizados juntos
+  return (
+    <div
+      onMouseEnter={onEnter}
+      onMouseLeave={onLeave}
+      style={{
+        position: "absolute",
+        left: 620,
+        top: 235,
+        width: 1260,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 78,
+      }}
+    >
+      {/* Linha dos aparelhos (altura fixa p/ as sub-abas não pularem) */}
+      <div
+        key={tab}
+        className="anim-fade"
+        style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 44, height: 540 }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-4 text-center">
-          {[
-            { icon: MessageSquare, label: "Atendimento direto com o dev" },
-            { icon: Zap, label: "Entrega ágil e sob medida" },
-            { icon: ShieldCheck, label: "Segurança RLS & LGPD" },
-            { icon: Database, label: "SaaS próprio em produção" },
-          ].map(({ icon: Icon, label }) => (
-            <div
-              key={label}
-              className="flex flex-col items-center gap-2 px-2"
-            >
-              <Icon
-                className={`w-5 h-5 ${darkMode ? "text-indigo-400" : "text-indigo-600"}`}
-              />
-              <span
-                className={`text-xs font-medium leading-tight ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                {label}
-              </span>
+        {tab === "desktop" && <DesktopMockup />}
+        {tab === "webapp" && (
+          <img src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ width: 600, display: "block" }} />
+        )}
+        {(tab === "webapp" || tab === "mobile") && (
+          <img
+            src={A("mockup-mobile.png")}
+            alt="Seu projeto aqui"
+            style={{ width: tab === "webapp" ? 236 : 264, display: "block" }}
+          />
+        )}
+      </div>
+
+      {/* Sub-abas — centralizadas com a showcase */}
+      <ServiceSubPills show={showSub} tab={tab} setTab={setTab} />
+    </div>
+  );
+}
+
+/* --- Pills de Serviços ------------------------------------------ */
+function ServicePills({
+  tab,
+  setTab,
+  lastSoftware,
+  onSoftwareEnter,
+  onSoftwareLeave,
+  onOtherEnter,
+}: {
+  tab: string;
+  setTab: (t: any) => void;
+  lastSoftware: React.RefObject<"mobile" | "webapp" | "desktop">;
+  onSoftwareEnter: () => void;
+  onSoftwareLeave: () => void;
+  onOtherEnter: () => void;
+}) {
+  const isSoftware = tab === "mobile" || tab === "webapp" || tab === "desktop";
+
+  const pill: React.CSSProperties = {
+    position: "absolute",
+    height: 50,
+    borderRadius: 100,
+    fontSize: fs(24),
+    fontWeight: 700,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 32px",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "transform .2s, box-shadow .2s, filter .2s",
+  };
+  const activeShadow = "0 12px 30px -10px rgba(0,0,0,.35)";
+  const lift = (on: boolean): React.CSSProperties =>
+    on ? { transform: "translateX(18px)", boxShadow: activeShadow } : {};
+
+  return (
+    <div style={{ position: "absolute", left: 120, top: 838, width: 700, height: 220 }}>
+      {/* Categoria "Software sob medida" — no hover revela as sub-opções (ServiceSubPills) */}
+      <div
+        onMouseEnter={() => {
+          if (!isSoftware) setTab(lastSoftware.current);
+          onSoftwareEnter();
+        }}
+        onMouseLeave={onSoftwareLeave}
+        style={{
+          ...pill,
+          left: 0,
+          top: 0,
+          background: isSoftware ? "#8d57f8" : "#fff",
+          color: isSoftware ? "#fff" : "#000",
+          ...lift(isSoftware),
+        }}
+      >
+        Software sob medida
+      </div>
+
+      {/* Landing Pages */}
+      <div
+        onMouseEnter={() => {
+          onOtherEnter();
+          setTab("landing");
+        }}
+        style={{
+          ...pill,
+          left: 0,
+          top: 74,
+          background: "#fff",
+          color: tab === "landing" ? "#8d57f8" : "#000",
+          ...lift(tab === "landing"),
+        }}
+      >
+        Landing Pages
+      </div>
+
+      {/* SaaS */}
+      <div
+        onMouseEnter={() => {
+          onOtherEnter();
+          setTab("saas");
+        }}
+        style={{
+          ...pill,
+          left: 0,
+          top: 148,
+          background: "#fff",
+          color: tab === "saas" ? "#8d57f8" : "#000",
+          ...lift(tab === "saas"),
+        }}
+      >
+        SaaS
+      </div>
+    </div>
+  );
+}
+
+/* --- Showcase de Produtos (mesma coluna flex de Serviços) ------ */
+function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 620,
+        top: 235,
+        width: 1260,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        key={tab}
+        className="anim-fade"
+        style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 40, height: 520 }}
+      >
+        {tab === "finance" ? (
+          <>
+            <img src={A("mockup-finance-1.png")} alt="App Finance" style={{ width: 236, display: "block" }} />
+            <img src={A("mockup-finance-2.png")} alt="App Finance" style={{ width: 236, display: "block" }} />
+          </>
+        ) : (
+          <>
+            <img src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ width: 600, display: "block" }} />
+            <img src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ width: 214, display: "block" }} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* --- Pills de Produtos (mesmo estilo das pills de Serviços) ---- */
+function ProductPills({ tab, setTab }: { tab: "finance" | "lucena"; setTab: (t: "finance" | "lucena") => void }) {
+  const pill: React.CSSProperties = {
+    position: "absolute",
+    height: 50,
+    borderRadius: 100,
+    fontSize: fs(24),
+    fontWeight: 700,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "0 32px",
+    whiteSpace: "nowrap",
+    cursor: "pointer",
+    userSelect: "none",
+    transition: "transform .2s, box-shadow .2s, filter .2s",
+  };
+  const lift = (on: boolean): React.CSSProperties =>
+    on ? { transform: "translateX(18px)", boxShadow: "0 12px 30px -10px rgba(0,0,0,.45)" } : {};
+
+  return (
+    <div style={{ position: "absolute", left: 120, top: 838, width: 700, height: 200 }}>
+      <div
+        onMouseEnter={() => setTab("lucena")}
+        style={{ ...pill, left: 0, top: 0, background: "#6b0f14", color: "#fff", ...lift(tab === "lucena") }}
+      >
+        Rede Lucena
+      </div>
+      <div
+        onMouseEnter={() => setTab("finance")}
+        style={{ ...pill, left: 0, top: 74, background: "#fff", color: "#171e57", ...lift(tab === "finance") }}
+      >
+        Finance
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================= *
+ *  HOME — entrada da página + notebook "sistema vivo"                *
+ * ================================================================= */
+const SERVICES = ["Websites", "Apps Mobile", "Sistemas Web", "Dashboards", "Integrações"];
+
+const ptInt = (n: number) => Math.round(n).toLocaleString("pt-BR");
+const ptBRL = (n: number) => "R$ " + Math.round(n).toLocaleString("pt-BR");
+
+/* número que sobe na entrada e depois oscila de leve (dashboard "vivo") */
+function useLiveNumber(base: number, active: boolean) {
+  const [n, setN] = useState(0);
+
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const t0 = performance.now();
+    const dur = 950;
+    const loop = (t: number) => {
+      const p = Math.min(1, (t - t0) / dur);
+      setN(base * (1 - Math.pow(1 - p, 3)));
+      raf = p < 1 ? requestAnimationFrame(loop) : 0;
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [active, base]);
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => {
+      setN((v) => {
+        const amp = Math.max(1, base * 0.0035);
+        const next = v + (Math.random() - 0.42) * amp * 2;
+        return Math.min(base * 1.04, Math.max(base * 0.92, next));
+      });
+    }, 3600);
+    return () => clearInterval(id);
+  }, [active, base]);
+
+  return n;
+}
+
+/* mini gráfico que "cresce" periodicamente */
+function MiniChart({ active }: { active: boolean }) {
+  const [bars, setBars] = useState<number[]>([34, 52, 40, 62, 46, 70, 54]);
+
+  useEffect(() => {
+    if (!active) return;
+    const id = setInterval(
+      () => setBars(Array.from({ length: 7 }, () => 26 + Math.round(Math.random() * 68))),
+      4200,
+    );
+    return () => clearInterval(id);
+  }, [active]);
+
+  return (
+    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 54 }}>
+      {bars.map((h, i) => (
+        <div
+          key={i}
+          style={{
+            width: 11,
+            height: `${h}%`,
+            borderRadius: 3,
+            background: i === 6 ? "#5672f8" : "#cdbff2",
+            transition: "height .9s cubic-bezier(.16, 1, .3, 1)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* círculo azul do hero com linhas, pontos, conexões e mini-UI girando */
+function HeroOrb() {
+  const dots: [number, number, number][] = [
+    [300, 210, 4], [770, 300, 3], [560, 130, 5], [850, 640, 3], [210, 560, 4],
+    [650, 800, 3], [440, 470, 6], [910, 430, 2.5], [360, 360, 3], [720, 560, 3.5],
+  ];
+  return (
+    <div
+      className="hi-orb"
+      style={{ position: "absolute", left: 880, top: -300, width: 1040, height: 1040, pointerEvents: "none" }}
+    >
+      <div className="hero-orb-inner" style={{ position: "absolute", inset: 0 }}>
+        <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "#5672f8" }} />
+        <svg viewBox="0 0 1040 1040" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+          <defs>
+            <clipPath id="hi-orb-clip">
+              <circle cx="520" cy="520" r="520" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#hi-orb-clip)">
+            <g className="orb-spin" style={{ transformOrigin: "520px 520px" }}>
+              <circle cx="520" cy="520" r="470" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" />
+              <circle cx="520" cy="520" r="330" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" strokeDasharray="4 16" />
+              <line x1="300" y1="210" x2="560" y2="130" stroke="rgba(255,255,255,0.13)" strokeWidth="1" />
+              <line x1="560" y1="130" x2="770" y2="300" stroke="rgba(255,255,255,0.09)" strokeWidth="1" />
+              <line x1="440" y1="470" x2="650" y2="800" stroke="rgba(255,255,255,0.09)" strokeWidth="1" />
+              <line x1="440" y1="470" x2="210" y2="560" stroke="rgba(255,255,255,0.11)" strokeWidth="1" />
+              {dots.map(([cx, cy, r], i) => (
+                <circle key={i} cx={cx} cy={cy} r={r} fill="rgba(255,255,255,0.5)" />
+              ))}
+              <rect x="235" y="700" width="150" height="46" rx="10" fill="rgba(255,255,255,0.1)" />
+              <rect x="251" y="716" width="72" height="8" rx="4" fill="rgba(255,255,255,0.35)" />
+              <rect x="690" y="175" width="120" height="82" rx="12" fill="rgba(255,255,255,0.09)" />
+              <circle cx="712" cy="200" r="9" fill="rgba(255,255,255,0.4)" />
+              <rect x="726" y="196" width="60" height="8" rx="4" fill="rgba(255,255,255,0.3)" />
+            </g>
+            <g className="orb-spin-rev" style={{ transformOrigin: "520px 520px" }}>
+              <circle cx="520" cy="520" r="200" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="2 12" />
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function HomeScene() {
+  const [entered, setEntered] = useState(false);
+
+  useEffect(() => {
+    const el = document.documentElement;
+    if (el.hasAttribute("data-ready")) {
+      setEntered(true);
+      return;
+    }
+    const mo = new MutationObserver(() => {
+      if (el.hasAttribute("data-ready")) {
+        setEntered(true);
+        mo.disconnect();
+      }
+    });
+    mo.observe(el, { attributes: true, attributeFilter: ["data-ready"] });
+    const fb = setTimeout(() => setEntered(true), 6500);
+    return () => {
+      mo.disconnect();
+      clearTimeout(fb);
+    };
+  }, []);
+
+  const vendas = useLiveNumber(12480, entered);
+  const clientes = useLiveNumber(1248, entered);
+
+  const cardBox: React.CSSProperties = {
+    padding: "11px 15px",
+    borderRadius: 14,
+    background: "#fff",
+    boxShadow: "0 20px 44px -18px rgba(24,20,46,.4)",
+    border: "1px solid rgba(24,20,46,.05)",
+  };
+  const cardLabel: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#8b8794" };
+  const cardValue: React.CSSProperties = {
+    fontSize: 18,
+    fontWeight: 800,
+    color: "#1e1b2e",
+    marginTop: 3,
+    fontVariantNumeric: "tabular-nums",
+  };
+  const cardUp: React.CSSProperties = { fontSize: 11, fontWeight: 700, color: "#28c840", marginTop: 2 };
+
+  return (
+    <section
+      className={entered ? "home-in" : undefined}
+      style={{ position: "absolute", left: 0, top: 0, width: CANVAS_W, height: HOME_H, background: "#ffffff", overflow: "hidden" }}
+    >
+      {/* Ellipse azul + partículas / conexões girando lentamente */}
+      <HeroOrb />
+
+      {/* Título */}
+      <h1
+        className="hi-title"
+        style={{
+          position: "absolute",
+          left: 120,
+          top: 169,
+          width: 700,
+          margin: 0,
+          fontSize: fs(64),
+          lineHeight: 1.1,
+          fontWeight: 700,
+          color: "#000000",
+        }}
+      >
+        Software sob medida para o seu negócio crescer
+      </h1>
+
+      {/* Subtítulo */}
+      <p
+        className="hi-sub"
+        style={{
+          position: "absolute",
+          left: 123,
+          top: 377,
+          width: 844,
+          margin: 0,
+          fontSize: fs(24),
+          fontWeight: 700,
+          color: "#6c6969",
+        }}
+      >
+        Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
+      </p>
+
+      {/* Linha de serviços (marquee lento) — ocupa o vão entre subtítulo e botão */}
+      <div
+        className="hi-serv"
+        style={{
+          position: "absolute",
+          left: 123,
+          top: 452,
+          width: 780,
+          height: 34,
+          overflow: "hidden",
+          WebkitMaskImage: "linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)",
+          maskImage: "linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent)",
+        }}
+      >
+        <div className="hi-serv-track" style={{ display: "flex", width: "max-content" }}>
+          {[0, 1].map((copy) => (
+            <div key={copy} style={{ display: "flex", alignItems: "center" }} aria-hidden={copy === 1}>
+              {SERVICES.map((s) => (
+                <span key={s} style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>
+                  <span style={{ width: 6, height: 6, borderRadius: 999, background: "#8d57f8", margin: "0 22px" }} />
+                  <span style={{ fontSize: fs(20), fontWeight: 700, color: "#6c6969" }}>{s}</span>
+                </span>
+              ))}
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* SEÇÃO DE SERVIÇOS */}
-      <section
-        id="servicos"
-        className={`py-14 lg:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b ${darkMode ? "border-slate-900" : "border-slate-100"}`}
-      >
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <h2
-            className={`text-3xl sm:text-4xl font-bold tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-          >
-            Engenharia de Software Focada em Resultados
-          </h2>
-          <p className={darkMode ? "text-slate-400" : "text-slate-600"}>
-            Não criamos apenas telas. Desenvolvemos ferramentas estratégicas
-            corporativas que otimizam a sua operação de ponta a ponta.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Serviço 1 */}
-          <div
-            className={`border rounded-2xl p-8 transition-all flex flex-col justify-between group hover:-translate-y-1 ${darkMode ? "bg-slate-900/30 border-slate-900 hover:border-blue-500/40" : "bg-slate-50 border-slate-200 hover:border-indigo-200 hover:shadow-lg"}`}
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
-                <Smartphone className="w-6 h-6" />
-              </div>
-              <h3
-                className={`text-xl font-bold transition ${darkMode ? "text-white group-hover:text-blue-400" : "text-slate-950 group-hover:text-indigo-600"}`}
-              >
-                Aplicativos Nativos Móveis
-              </h3>
-              <p
-                className={`text-sm leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                Desenvolvimento focado em iOS e Android utilizando arquitetura
-                moderna. Perfeito para sistemas de delivery, força de vendas e
-                automação comercial que exigem fluidez e funcionamento offline.
-              </p>
-            </div>
-          </div>
-
-          {/* Serviço 2 */}
-          <div
-            className={`border rounded-2xl p-8 transition-all flex flex-col justify-between group hover:-translate-y-1 ${darkMode ? "bg-slate-900/30 border-slate-900 hover:border-purple-500/40" : "bg-slate-50 border-slate-200 hover:border-indigo-200 hover:shadow-lg"}`}
-          >
-            <div className="space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-500 group-hover:scale-110 transition-transform">
-                <Globe className="w-6 h-6" />
-              </div>
-              <h3
-                className={`text-xl font-bold transition ${darkMode ? "text-white group-hover:text-purple-400" : "text-slate-950 group-hover:text-indigo-600"}`}
-              >
-                Web Applications & Dashboards
-              </h3>
-              <p
-                className={`text-sm leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                Plataformas web administrativas robustas integradas a gateways
-                de pagamento, controle de estoque e relatórios analíticos em
-                tempo real. Performance máxima com foco em UX/UI.
-              </p>
-            </div>
-          </div>
-          <div
-            className={`md:col-span-2 border rounded-2xl p-8 transition-all flex flex-col justify-between group hover:-translate-y-1 ${darkMode ? "bg-slate-900/30 border-slate-900 hover:border-amber-500/40" : "bg-slate-50 border-slate-200 hover:border-indigo-200 hover:shadow-lg"}`}
-          >
-            <div className="space-y-4 max-w-2xl">
-              <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
-                <Wrench className="w-6 h-6" />
-              </div>
-              <h3
-                className={`text-xl font-bold transition ${darkMode ? "text-white group-hover:text-amber-500" : "text-slate-950 group-hover:text-indigo-600"}`}
-              >
-                Aplicativos Personalizados
-              </h3>
-              <p
-                className={`text-sm leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                Soluções sob medida para necessidades específicas do seu
-                negócio. Desde integrações complexas com sistemas legados até
-                ferramentas de automação interna, criamos o que for necessário
-                para otimizar seus processos e aumentar sua eficiência
-                operacional.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VITRINE GBCLOCK — PRODUTO PRÓPRIO */}
-      <section
-        id="gbclock"
-        className={`py-14 lg:py-20 border-b ${darkMode ? "bg-slate-900/10 border-slate-900" : "bg-white border-slate-200"}`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto space-y-4 mb-10">
-            <div
-              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ${darkMode ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400" : "border-emerald-200 bg-emerald-50 text-emerald-600"}`}
-            >
-              <Clock className="w-3.5 h-3.5" />
-              Produto próprio · SaaS
-            </div>
-            <h2
-              className={`text-3xl sm:text-4xl font-bold tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-            >
-              GBClock: ponto, banco de horas e escala em um só lugar
-            </h2>
-            <p className={darkMode ? "text-slate-400" : "text-slate-600"}>
-              Criamos e usamos o GBClock na prática. Um retrato real da
-              qualidade que entregamos: rápido, seguro e desenhado para o dia
-              a dia do RH.
-            </p>
-          </div>
-
-          <div className="grid lg:grid-cols-12 gap-10 items-center">
-            {/* Vitrine com abas */}
-            <div className="lg:col-span-7 relative">
-              <div className="absolute -inset-6 bg-gradient-to-tr from-emerald-500/10 to-blue-500/10 blur-3xl rounded-full pointer-events-none" />
-              <div
-                className={`relative rounded-2xl border shadow-2xl overflow-hidden ${darkMode ? "bg-slate-900/60 border-slate-800" : "bg-slate-50 border-slate-200"}`}
-              >
-                <div
-                  className={`flex items-center gap-1.5 px-4 py-3 border-b ${darkMode ? "border-slate-800" : "border-slate-200"}`}
-                >
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                  <div
-                    className={`ml-3 flex-1 h-4 rounded-full flex items-center px-2.5 text-[10px] font-mono gap-1.5 ${darkMode ? "bg-slate-800 text-slate-500" : "bg-slate-200 text-slate-500"}`}
-                  >
-                    <Globe className="w-3 h-3 shrink-0" />
-                    {gbclockContent[gbclockView].url}
-                  </div>
-                </div>
-                <div className="relative w-full aspect-[16/9]">
-                  <Image
-                    src={gbclockContent[gbclockView].image}
-                    alt={gbclockContent[gbclockView].alt}
-                    fill
-                    className="object-cover object-top"
-                  />
-                </div>
-              </div>
-              <p
-                className={`text-xs mt-3 text-center ${darkMode ? "text-slate-500" : "text-slate-500"}`}
-              >
-                {gbclockContent[gbclockView].caption}
-              </p>
-            </div>
-
-            {/* Conteúdo + abas */}
-            <div className="lg:col-span-5 space-y-6">
-              <div
-                className={`inline-flex p-1 rounded-xl border gap-1 ${darkMode ? "bg-slate-900 border-slate-800" : "bg-slate-100 border-slate-200"}`}
-              >
-                <button
-                  onClick={() => setGbclockView("dashboard")}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition ${
-                    gbclockView === "dashboard"
-                      ? "bg-emerald-500 text-white shadow"
-                      : darkMode
-                        ? "text-slate-400 hover:text-white"
-                        : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  Dashboard
-                </button>
-                <button
-                  onClick={() => setGbclockView("escala")}
-                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition ${
-                    gbclockView === "escala"
-                      ? "bg-emerald-500 text-white shadow"
-                      : darkMode
-                        ? "text-slate-400 hover:text-white"
-                        : "text-slate-500 hover:text-slate-900"
-                  }`}
-                >
-                  <CalendarDays className="w-3.5 h-3.5" />
-                  Escala de Turnos
-                </button>
-              </div>
-
-              <h3
-                className={`text-2xl font-bold tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-              >
-                Sua equipe, o ponto e o banco de horas — sob controle total.
-              </h3>
-              <p
-                className={`text-sm leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-              >
-                Do fichar até a folha mensal: o GBClock acompanha saldos
-                positivos e negativos por funcionário, organiza a escala por
-                cargo e turno, e mantém tudo pronto para impressão em
-                segundos.
-              </p>
-
-              <ul className="space-y-3">
-                {[
-                  "Banco de horas com créditos e débitos em tempo real",
-                  "Escala mensal por turno, organizada por cargo",
-                  "Histórico completo de ponto por funcionário",
-                  "Impressão e exportação com um clique",
-                ].map((item) => (
-                  <li
-                    key={item}
-                    className={`flex items-start gap-2.5 text-sm ${darkMode ? "text-slate-300" : "text-slate-700"}`}
-                  >
-                    <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500 shrink-0 mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="flex flex-wrap gap-3 pt-2">
-                <a
-                  href="https://gbclock.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-600/20"
-                >
-                  Conhecer a plataforma
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className={`inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-xl transition border ${darkMode ? "border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-900" : "border-slate-300 hover:border-slate-400 text-slate-800 hover:bg-slate-50"}`}
-                >
-                  Quero um sistema assim
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      
-
-      {/* PORTFÓLIO DE PROJETOS */}
-      <section
-        id="portfolio"
-        className={`py-14 lg:py-20 border-b ${darkMode ? "bg-slate-900/10 border-slate-900" : "bg-gray-200 border-slate-300"}`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-4">
-              <h2
-                className={`text-3xl font-bold tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-              >
-                Soluções desenvolvidas pela GB Company
-              </h2>
-              <p className={darkMode ? "text-slate-400" : "text-slate-600"}>
-                Projetos de alta performance que transformam processos manuais
-                em ecossistemas digitais lucrativos, seguros e escaláveis.
-              </p>
-            </div>
-
-            <div className="lg:col-span-7 grid sm:grid-cols-2 gap-6">
-              {/* CARD 1 - FTA MILAGRES */}
-              <div
-                onClick={() =>
-                  setActiveProject(activeProject === "fta" ? null : "fta")
-                }
-                onMouseEnter={() => setActiveProject("fta")}
-                onMouseLeave={() => setActiveProject(null)}
-                className={`p-6 rounded-xl border relative overflow-hidden transition-all duration-500 min-h-[220px] flex flex-col justify-between cursor-pointer select-none ${
-                  darkMode
-                    ? `bg-slate-900/40 ${activeProject === "fta" ? "border-indigo-500" : "border-slate-900"}`
-                    : `bg-white ${activeProject === "fta" ? "border-indigo-500 shadow-md" : "border-slate-200"}`
-                }`}
-              >
-                {/* IMAGEM ESTRUTURAL AO FUNDO (Com desfoque dinâmico) */}
-                <div
-                  className={`absolute inset-0 z-0 transition-all duration-700 pointer-events-none ${
-                    activeProject === "fta"
-                      ? "blur-none opacity-100 scale-100"
-                      : "blur-[2px] opacity-25 scale-105"
-                  }`}
-                >
-                  <Image
-                    src={`${basePath}/ftamilagres.png`}
-                    alt="Preview FTA Milagres"
-                    fill
-                    className="object-cover object-top"
-                  />
-                  <div
-                    className={`absolute inset-0 transition-opacity duration-500 ${darkMode ? "bg-slate-950/40" : "bg-white/10"}`}
-                  />
-                </div>
-
-                {/* CONTEÚDO DO CARD */}
-                <div
-                  className={`relative z-10 space-y-3 transition-opacity duration-500 ${activeProject === "fta" ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-                >
-                  <div className="flex items-center gap-1.5 text-indigo-500">
-                    <Monitor className="w-5 h-5" />
-                    <span className="text-xs font-bold text-slate-500">+</span>
-                    <Smartphone className="w-4 h-4" />
-                  </div>
-                  <h4
-                    className={`font-bold text-base tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-                  >
-                    ftamilagres
-                  </h4>
-                  <p
-                    className={`text-xs leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                  >
-                    App nativo para Android e iOS + painel admin que digitalizou
-                    o processo de vendas e delivery da maior farmácia da Rota
-                    Ecológica dos Milagres em Alagoas.
-                  </p>
-                </div>
-              </div>
-
-              {/* CARD 2 - LEVI JORDA */}
-              <div
-                onClick={() =>
-                  setActiveProject(activeProject === "levi" ? null : "levi")
-                }
-                onMouseEnter={() => setActiveProject("levi")}
-                onMouseLeave={() => setActiveProject(null)}
-                className={`p-6 rounded-xl border relative overflow-hidden transition-all duration-500 min-h-[220px] flex flex-col justify-between cursor-pointer select-none ${
-                  darkMode
-                    ? `bg-slate-900/40 ${activeProject === "levi" ? "border-purple-500" : "border-slate-900"}`
-                    : `bg-white ${activeProject === "levi" ? "border-purple-500 shadow-md" : "border-slate-200"}`
-                }`}
-              >
-                {/* IMAGEM ESTRUTURAL AO FUNDO (Com desfoque dinâmico) */}
-                <div
-                  className={`absolute inset-0 z-0 transition-all duration-700 pointer-events-none ${
-                    activeProject === "levi"
-                      ? "blur-none opacity-100 scale-100"
-                      : "blur-[2px] opacity-25 scale-105"
-                  }`}
-                >
-                  <Image
-                    src={`${basePath}/levijordahomecare.png`}
-                    alt="Preview Levi Jorda"
-                    fill
-                    className="object-cover object-top"
-                  />
-                  <div
-                    className={`absolute inset-0 transition-opacity duration-500 ${darkMode ? "bg-slate-950/40" : "bg-white/10"}`}
-                  />
-                </div>
-
-                {/* CONTEÚDO DO CARD */}
-                <div
-                  className={`relative z-10 space-y-3 transition-opacity duration-500 ${activeProject === "levi" ? "opacity-0 pointer-events-none" : "opacity-100"}`}
-                >
-                  <div className="flex items-center gap-1.5 text-purple-500">
-                    <Monitor className="w-5 h-5" />
-                    <span className="text-xs font-bold text-slate-500">+</span>
-                    <Smartphone className="w-4 h-4" />
-                  </div>
-                  <h4
-                    className={`font-bold text-base tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-                  >
-                    Levi Jorda - Home Care
-                  </h4>
-                  <p
-                    className={`text-xs leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                  >
-                    Landing page moderna e responsiva desenvolvida para
-                    profissional de enfermagem domiciliar (home care), com foco
-                    em captação de pacientes, apresentação dos serviços e
-                    fortalecimento da presença digital.
-                  </p>
-                </div>
-              </div>
-
-              {/* CARD GBCLOCK — atalho para a vitrine */}
-              <a
-                href="#gbclock"
-                className={`sm:col-span-2 p-6 rounded-xl border relative overflow-hidden transition-all duration-300 flex items-center justify-between gap-4 group ${
-                  darkMode
-                    ? "bg-slate-900/40 border-slate-900 hover:border-emerald-500/50"
-                    : "bg-white border-slate-200 hover:border-emerald-300 hover:shadow-md"
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h4
-                      className={`font-bold text-base tracking-tight ${darkMode ? "text-white" : "text-slate-950"}`}
-                    >
-                      GBClock — Produto próprio · SaaS
-                    </h4>
-                    <p
-                      className={`text-xs leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                    >
-                      Ponto, banco de horas e escala. Veja a vitrine completa
-                      acima.
-                    </p>
-                  </div>
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-emerald-500 shrink-0 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="py-14 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.06),transparent_60%)]" />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          <h2
-            className={`text-3xl sm:text-4xl font-extrabold ${darkMode ? "text-white" : "text-slate-950"}`}
-          >
-            Pronto para digitalizar e escalar sua operação?
-          </h2>
-          <p
-            className={`max-w-xl mx-auto text-sm sm:text-base ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-          >
-            Vamos desenhar a arquitetura ideal para o aplicativo ou plataforma
-            web que o seu negócio precisa hoje.
-          </p>
-          <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://wa.me/82993919961"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold px-8 py-4 rounded-xl transition inline-flex items-center justify-center gap-2 shadow-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white"
-            >
-              Falar com o Desenvolvedor
-            </a>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className={`font-semibold px-8 py-4 rounded-xl transition inline-flex items-center justify-center gap-2 border ${darkMode ? "border-slate-800 hover:border-slate-700 text-slate-200 hover:bg-slate-900" : "border-slate-300 hover:border-slate-400 text-slate-800 hover:bg-white"}`}
-            >
-              Solicitar Orçamento
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer
-        className={`border-t py-7 text-center ${darkMode ? "border-slate-900 text-slate-500" : "border-slate-100 text-slate-400"}`}
-      >
-        <p
-          className={`max-w-xl mx-auto px-4 text-sm italic leading-relaxed ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-        >
-          &ldquo;Um novo mandamento lhes dou: Amem-se uns aos outros. Como eu
-          os amei, vocês devem amar-se uns aos outros.&rdquo;
-          <span className="block not-italic text-xs mt-1 text-indigo-500 font-semibold">
-            {"João 13:34"}
-          </span>
-        </p>
-        <p className="text-xs font-mono mt-6">
-          &copy; {new Date().getFullYear()} GB Company. Tecnologia que
-          Impulsiona.
-        </p>
-      </footer>
-      {/* BOTÃO FLUTUANTE WHATSAPP */}
+      {/* Botão WhatsApp */}
       <a
-        href={wppLink}
+        className="hi-btn"
+        href={WPP}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="Falar no WhatsApp"
-        className="fixed bottom-5 right-5 z-[90] w-14 h-14 rounded-full bg-green-500 hover:bg-green-400 text-white flex items-center justify-center shadow-xl shadow-green-900/30 transition-transform hover:scale-110"
+        style={{
+          position: "absolute",
+          left: 123,
+          top: 504,
+          width: 389,
+          height: 77,
+          borderRadius: 10,
+          background: "#8d57f8",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 18,
+          textDecoration: "none",
+          fontSize: fs(24),
+          fontWeight: 700,
+          color: "#ffffff",
+          transition: "transform .2s, box-shadow .2s",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 18px 40px -12px rgba(141,87,248,.55)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "none";
+          e.currentTarget.style.boxShadow = "none";
+        }}
       >
-        <WhatsAppIcon className="w-7 h-7" />
+        Chamar no WhatsApp
+        <Wpp size={30} color="#ffffff" />
       </a>
 
-      {/* MODAL DE ORÇAMENTO */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      {/* LogoCircle girando + play (rola até Produtos) */}
+      <div className="hi-logo" style={{ position: "absolute", left: 1361, top: 153, width: 136, height: 136, zIndex: 6 }}>
+        <a
+          className="hi-play"
+          href="#produtos"
+          aria-label="Ver projetos"
+          title="Ver projetos"
+          style={{
+            position: "absolute",
+            left: 25,
+            top: 12,
+            width: 250,
+            height: 112,
+            borderRadius: 100,
+            background: "#8d57f8",
+            display: "block",
+            textDecoration: "none",
+          }}
+        >
+          <img src={A("play.svg")} alt="" style={{ position: "absolute", left: 138, top: 27, width: 79, height: 58 }} />
+        </a>
+        <img src={A("ellipse-white.svg")} alt="" style={{ position: "absolute", left: 0, top: 0, width: 136, height: 136 }} />
+        <img
+          className="hi-logo-img"
+          src={A("logo.png")}
+          alt="GB Company"
+          style={{ position: "absolute", left: 28, top: 28, width: 80, height: 80 }}
+        />
+      </div>
+      <a
+        className="hi-cap"
+        href="#produtos"
+        style={{
+          position: "absolute",
+          left: 1682,
+          top: 194,
+          width: 160,
+          margin: 0,
+          fontSize: fs(24),
+          fontWeight: 700,
+          fontStyle: "italic",
+          color: "#ffffff",
+          textDecoration: "none",
+        }}
+      >
+        Dê um play na GB
+      </a>
+
+      {/* Notebook — entra com fade + slide-up + scale, depois flutua ~4px */}
+      <div className="hi-note" style={{ position: "absolute", left: 1141, top: 399, width: 712, height: 428 }}>
+        <div className="hi-note-inner" style={{ position: "relative", width: "100%", height: "100%" }}>
+          <img
+            src={A("mockup-home.png")}
+            alt="Prévia do sistema"
+            style={{ position: "absolute", inset: 0, width: 712, height: 428, objectFit: "contain" }}
+          />
+          {/* camada da tela: cursor percorrendo a UI + notificação */}
           <div
-            className={`w-full max-w-lg p-6 rounded-2xl border shadow-2xl transition-all duration-300 ${
-              darkMode
-                ? "bg-slate-900 border-slate-800 text-white"
-                : "bg-white border-slate-200 text-slate-900"
-            }`}
+            className="hi-screen"
+            style={{
+              position: "absolute",
+              left: 16,
+              top: 10,
+              width: 680,
+              height: 360,
+              overflow: "hidden",
+              borderRadius: 8,
+              pointerEvents: "none",
+            }}
           >
-            {/* Cabeçalho do Modal */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-xl font-bold">Iniciar seu projeto</h3>
-                <p
-                  className={`text-xs mt-1 ${darkMode ? "text-slate-400" : "text-slate-500"}`}
-                >
-                  Conte-nos o que você precisa para impulsionar seu negócio.
-                </p>
-              </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className={`p-1.5 rounded-lg border transition ${
-                  darkMode
-                    ? "border-slate-800 hover:bg-slate-800 text-slate-400"
-                    : "border-slate-200 hover:bg-slate-100 text-slate-500"
-                }`}
-              >
-                ✕
-              </button>
+            <div className="hi-cursor" aria-hidden>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M4 2.5l5.5 15 2.2-6 6-2.2-13.7-6.8z"
+                  fill="#1e1b2e"
+                  stroke="#fff"
+                  strokeWidth="1.3"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
-
-            {/* Formulário */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                const empresa = formData.get("empresa") as string;
-                const segmento = formData.get("segmento") as string;
-                const escopo = formData.get("escopo") as string;
-
-                // Formata a mensagem para o WhatsApp de forma profissional
-                const mensagem = encodeURIComponent(
-                  `Olá GB Company! Gostaria de iniciar um projeto.\n\n` +
-                    `*Empresa:* ${empresa}\n` +
-                    `*Segmento:* ${segmento}\n` +
-                    `*O que precisa ser desenvolvido:* ${escopo}`,
-                );
-
-                window.open(
-                  `https://wa.me/5582993919961?text=${mensagem}`,
-                  "_blank",
-                );
-                setIsModalOpen(false);
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label
-                  className={`block text-xs font-semibold mb-1.5 uppercase tracking-wider ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                >
-                  Nome da Empresa
-                </label>
-                <input
-                  type="text"
-                  name="empresa"
-                  required
-                  placeholder="Nome da sua empresa ou negócio"
-                  className={`w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition focus:border-indigo-500 ${
-                    darkMode
-                      ? "bg-slate-950 border-slate-800 text-white placeholder-slate-600"
-                      : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400"
-                  }`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-xs font-semibold mb-1.5 uppercase tracking-wider ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                >
-                  Segmento do Negócio
-                </label>
-                <input
-                  type="text"
-                  name="segmento"
-                  required
-                  placeholder="Ex: Varejo / Farmacia"
-                  className={`w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition focus:border-indigo-500 ${
-                    darkMode
-                      ? "bg-slate-950 border-slate-800 text-white placeholder-slate-600"
-                      : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400"
-                  }`}
-                />
-              </div>
-
-              <div>
-                <label
-                  className={`block text-xs font-semibold mb-1.5 uppercase tracking-wider ${darkMode ? "text-slate-400" : "text-slate-600"}`}
-                >
-                  O que precisa ser desenvolvido?
-                </label>
-                <textarea
-                  name="escopo"
-                  required
-                  rows={4}
-                  placeholder="Descreva sua ideia (Ex: Preciso de um aplicativo de delivery integrado ao sistema de estoque com painel administrativo...)"
-                  className={`w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition focus:border-indigo-500 resize-none ${
-                    darkMode
-                      ? "bg-slate-950 border-slate-800 text-white placeholder-slate-600"
-                      : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400"
-                  }`}
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-3 rounded-xl text-sm font-semibold transition shadow-lg shadow-indigo-600/20 mt-2"
-              >
-                Enviar Proposta via WhatsApp
-              </button>
-            </form>
+            <div className="hi-toast" aria-hidden>
+              <span className="hi-toast-dot" />
+              Novo pedido recebido
+            </div>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+
+      {/* Cards flutuantes — surgem depois do notebook, cada um com float próprio */}
+      <div className="hi-float" style={{ position: "absolute", left: 1583, top: 366, zIndex: 7 }}>
+        <div className="hi-card-a" style={cardBox}>
+          <div style={cardLabel}>Vendas hoje</div>
+          <div style={cardValue}>{ptBRL(vendas)}</div>
+          <div style={cardUp}>↑ 8% hoje</div>
+        </div>
+      </div>
+
+      <div className="hi-float" style={{ position: "absolute", left: 1735, top: 612, zIndex: 7 }}>
+        <div className="hi-card-b" style={cardBox}>
+          <div style={cardLabel}>Clientes ativos</div>
+          <div style={cardValue}>{ptInt(clientes)}</div>
+          <div style={cardUp}>↑ 5%</div>
+        </div>
+      </div>
+
+      <div className="hi-float" style={{ position: "absolute", left: 1050, top: 690, zIndex: 7 }}>
+        <div className="hi-card-c" style={{ ...cardBox, width: 210 }}>
+          <div style={{ ...cardLabel, marginBottom: 8 }}>Vendas · últimos 7 dias</div>
+          <MiniChart active={entered} />
+        </div>
+      </div>
+
+      {/* Faixa de código */}
+      <CodeStrip top={987} />
+
+      {/* HEADER (sobreposto) */}
+      <header style={{ position: "absolute", left: 0, top: 0, width: CANVAS_W, height: 144, zIndex: 30 }}>
+        <img src={A("logo.png")} alt="GB Company" style={{ position: "absolute", left: 98, top: 19, width: 90, height: 90 }} />
+        <nav style={{ position: "absolute", left: 1037, top: 28, width: 664, fontSize: fs(24), fontWeight: 700 }}>
+          <a href="#home" style={{ position: "absolute", left: 235, color: "#fff", textDecoration: "none" }}>Home</a>
+          <a href="#servicos" style={{ position: "absolute", left: 371, color: "#fff", textDecoration: "none" }}>Serviços</a>
+          <a href="#produtos" style={{ position: "absolute", left: 542, color: "#fff", textDecoration: "none" }}>Produtos</a>
+        </nav>
+        <a
+          href={WPP}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            position: "absolute",
+            left: 1725,
+            top: 17,
+            width: 129,
+            height: 51,
+            borderRadius: 100,
+            background: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: fs(22),
+            fontWeight: 700,
+            color: "#000000",
+            textDecoration: "none",
+          }}
+        >
+          Contato
+        </a>
+      </header>
+    </section>
   );
 }
