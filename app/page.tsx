@@ -338,8 +338,8 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Coluna direita: mockups + sub-abas de Software */}
-          <ServiceMockups tab={servTab} setTab={pickServ} />
+          {/* Coluna direita: mockups */}
+          <ServiceMockups tab={servTab} />
         </section>
 
         {/* =========================== BRIEFING =========================== */}
@@ -697,7 +697,7 @@ const SOFTWARE_SUB = [
   ["desktop", "Desktop"],
 ] as const;
 
-/* --- Pills de Serviços — categoria, uma ao lado da outra -------- */
+/* --- Pills de Serviços — categoria + sub-abas de Software abaixo - */
 function ServicePillsRow({
   tab,
   setTab,
@@ -727,79 +727,50 @@ function ServicePillsRow({
   const off: React.CSSProperties = { background: "#fff", color: "#000" };
 
   return (
-    <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-      <div
-        className="fx-pill"
-        data-active={isSoftware}
-        onMouseEnter={() => !isSoftware && setTab(lastSoftware.current)}
-        onClick={() => setTab(lastSoftware.current)}
-        style={{ ...pill, ...(isSoftware ? on : off) }}
-      >
-        Software sob medida
+    <div>
+      {/* Categoria — uma ao lado da outra */}
+      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+        <div
+          className="fx-pill"
+          data-active={isSoftware}
+          onMouseEnter={() => !isSoftware && setTab(lastSoftware.current)}
+          onClick={() => setTab(lastSoftware.current)}
+          style={{ ...pill, ...(isSoftware ? on : off) }}
+        >
+          Software sob medida
+        </div>
+        <div
+          className="fx-pill"
+          data-active={tab === "landing"}
+          onMouseEnter={() => setTab("landing")}
+          onClick={() => setTab("landing")}
+          style={{ ...pill, ...(tab === "landing" ? on : off) }}
+        >
+          Landing Pages
+        </div>
+        <div
+          className="fx-pill"
+          data-active={tab === "saas"}
+          onMouseEnter={() => setTab("saas")}
+          onClick={() => setTab("saas")}
+          style={{ ...pill, ...(tab === "saas" ? on : off) }}
+        >
+          SaaS
+        </div>
       </div>
-      <div
-        className="fx-pill"
-        data-active={tab === "landing"}
-        onMouseEnter={() => setTab("landing")}
-        onClick={() => setTab("landing")}
-        style={{ ...pill, ...(tab === "landing" ? on : off) }}
-      >
-        Landing Pages
-      </div>
-      <div
-        className="fx-pill"
-        data-active={tab === "saas"}
-        onMouseEnter={() => setTab("saas")}
-        onClick={() => setTab("saas")}
-        style={{ ...pill, ...(tab === "saas" ? on : off) }}
-      >
-        SaaS
-      </div>
-    </div>
-  );
-}
 
-/* --- Sub-abas de Software (ACIMA) + mockups (coluna direita) ---- */
-function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) => void }) {
-  const isSoftware = tab === "mobile" || tab === "webapp" || tab === "desktop";
-
-  const subPill: React.CSSProperties = {
-    height: 52,
-    borderRadius: 100,
-    fontSize: fs(20),
-    fontWeight: 700,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "0 24px",
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-    userSelect: "none",
-    boxShadow: "0 8px 22px -12px rgba(24,20,46,.3)",
-  };
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: 824,
-        top: 300,
-        width: 1020,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      {/* Sub-abas ACIMA dos mockups — espelham as pills acima da cardbox */}
+      {/* Sub-abas — logo abaixo da pill "Software sob medida" */}
       <div
         style={{
           display: "flex",
-          gap: 14,
-          height: 52,
+          gap: 12,
+          marginTop: isSoftware ? 14 : 0,
+          height: isSoftware ? 46 : 0,
           opacity: isSoftware ? 1 : 0,
           transform: isSoftware ? "translateY(0)" : "translateY(-8px)",
           pointerEvents: isSoftware ? "auto" : "none",
-          transition: "opacity .25s ease, transform .25s ease",
+          overflow: "hidden",
+          transition: "opacity .25s ease, transform .25s ease, height .25s ease, margin-top .25s ease",
         }}
       >
         {SOFTWARE_SUB.map(([key, label]) => (
@@ -809,45 +780,75 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
             data-active={tab === key}
             onMouseEnter={() => setTab(key)}
             onClick={() => setTab(key)}
-            style={{ ...subPill, background: tab === key ? "#8d57f8" : "#fff", color: tab === key ? "#fff" : "#000" }}
+            style={{
+              height: 46,
+              borderRadius: 100,
+              fontSize: fs(18),
+              fontWeight: 700,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 22px",
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              userSelect: "none",
+              background: tab === key ? "#8d57f8" : "#efeafb",
+              color: tab === key ? "#fff" : "#3a2f57",
+              boxShadow: "0 6px 16px -10px rgba(24,20,46,.3)",
+            }}
           >
             {label}
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Mockups — começam abaixo da linha das pills, alinhados com a cardbox */}
-      <div style={{ marginTop: 26, height: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div
-          key={tab}
-          className="anim-card"
-          style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 40 }}
-        >
-          {tab === "landing" && (
-            <div className="fx-mock" style={{ width: 860 }}>
-              <LandingCase />
-            </div>
-          )}
-          {tab === "saas" && (
-            <div className="fx-mock">
-              <GenericMonitor variant="saas" />
-            </div>
-          )}
-          {tab === "desktop" && (
-            <div className="fx-mock">
-              <DesktopMockup />
-            </div>
-          )}
-          {tab === "webapp" && (
-            <>
-              <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ width: 560, display: "block" }} />
-              <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 190, display: "block" }} />
-            </>
-          )}
-          {tab === "mobile" && (
-            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 224, display: "block" }} />
-          )}
-        </div>
+/* --- Mockups de Serviços (coluna direita) --------------------- */
+function ServiceMockups({ tab }: { tab: ServTab }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 824,
+        top: 378,
+        width: 1020,
+        height: 600,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        key={tab}
+        className="anim-card"
+        style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 40 }}
+      >
+        {tab === "landing" && (
+          <div className="fx-mock" style={{ width: 860 }}>
+            <LandingCase />
+          </div>
+        )}
+        {tab === "saas" && (
+          <div className="fx-mock">
+            <GenericMonitor variant="saas" />
+          </div>
+        )}
+        {tab === "desktop" && (
+          <div className="fx-mock">
+            <DesktopMockup />
+          </div>
+        )}
+        {tab === "webapp" && (
+          <>
+            <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ width: 560, display: "block" }} />
+            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 190, display: "block" }} />
+          </>
+        )}
+        {tab === "mobile" && (
+          <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 224, display: "block" }} />
+        )}
       </div>
     </div>
   );
