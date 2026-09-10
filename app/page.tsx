@@ -764,7 +764,7 @@ function ServicePillsRow({
         style={{
           display: "flex",
           gap: 12,
-          marginTop: isSoftware ? 14 : 0,
+          marginTop: isSoftware ? 22 : 0,
           height: isSoftware ? 46 : 0,
           opacity: isSoftware ? 1 : 0,
           transform: isSoftware ? "translateY(0)" : "translateY(-8px)",
