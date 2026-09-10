@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 
 const bp = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const A = (f: string) => `${bp}/figma/${f}`;
-const WPP = "https://wa.me/82993919961";
+const WPP = "https://wa.me/11930968872";
 
 const CANVAS_W = 1920;
 
@@ -759,7 +759,7 @@ function ContactModal({ open, onClose }: { open: boolean; onClose: () => void })
           </span>
           <span>
             <span className="cm-row-label">WhatsApp</span>
-            <span className="cm-row-value">(82) 99391-9961</span>
+            <span className="cm-row-value">(11) 93096-8872</span>
           </span>
         </a>
 
