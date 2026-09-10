@@ -12,7 +12,7 @@ const CANVAS_W = 1920;
 
 /* fator global de tipografia — reduz todas as fontes de uma vez
    (Archivo Black é bem larga e pesada, então o fator é bem menor) */
-const FS = 0.62;
+const FS = 0.74;
 const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
 const HOME_H = 1083;
@@ -222,6 +222,7 @@ function GenericMonitor({ variant }: { variant: "landing" | "saas" }) {
 export default function Page() {
   const [servTab, setServTab] = useState<"mobile" | "webapp" | "desktop" | "landing" | "saas">("webapp");
   const [prodTab, setProdTab] = useState<"finance" | "lucena">("finance");
+  const [contatoOpen, setContatoOpen] = useState(false);
 
   // "Software sob medida" lembra a última sub-opção (Mobile / Web App / Desktop)
   const lastSoftware = React.useRef<"mobile" | "webapp" | "desktop">("webapp");
@@ -251,11 +252,12 @@ export default function Page() {
   }, []);
 
   return (
+    <>
     <div className="figma-outer" style={{ ["--canvas-h" as string]: `${CANVAS_H}px` } as React.CSSProperties}>
       <div className="figma-viewport">
         <div className="figma-canvas">
         {/* ============================= HOME ============================= */}
-        <HomeScene />
+        <HomeScene onContato={() => setContatoOpen(true)} />
 
         {/* =========================== SERVIÇOS =========================== */}
         <section
@@ -477,6 +479,25 @@ export default function Page() {
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, pointerEvents: "none" }}
           />
 
+          {PROD_BETA[prodTab] && (
+            <span
+              className="prod-beta"
+              style={{
+                position: "absolute",
+                left: 120,
+                top: 16,
+                fontSize: fs(13),
+                fontWeight: 700,
+                letterSpacing: 1.5,
+                color: "#fff",
+                background: "#8d57f8",
+                padding: "4px 11px",
+                borderRadius: 6,
+              }}
+            >
+              BETA
+            </span>
+          )}
           <h2 style={{ position: "absolute", left: 120, top: 52, width: 900, margin: 0, fontSize: fs(52), lineHeight: 1.08, fontWeight: 700, color: "#fff" }}>
             Um pouco da gbcompany
           </h2>
@@ -653,8 +674,105 @@ export default function Page() {
         </div>
       </div>
     </div>
+    <ContactModal open={contatoOpen} onClose={() => setContatoOpen(false)} />
+    </>
   );
 }
+
+/* ================================================================= *
+ *  Modal de contato — abre pelo botão "Contato" do header            *
+ * ================================================================= */
+const MAIL = "gbcompanyltda@gmail.com";
+const IG_URL = "https://instagram.com/gbcompany";
+
+function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [mounted, setMounted] = useState(open);
+
+  useEffect(() => {
+    if (open) setMounted(true);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!mounted) return null;
+
+  return (
+    <div
+      className={`cm-overlay ${open ? "cm-in" : "cm-out"}`}
+      onClick={onClose}
+      onAnimationEnd={() => {
+        if (!open) setMounted(false);
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Informações de contato"
+    >
+      <div className="cm-card" onClick={(e) => e.stopPropagation()}>
+        <div className="cm-head">
+          <div>
+            <p className="cm-title">Fale com a GB Company</p>
+            <p className="cm-sub">Escolha o melhor canal pra você</p>
+          </div>
+          <button type="button" className="cm-x" onClick={onClose} aria-label="Fechar">
+            ×
+          </button>
+        </div>
+
+        <a className="cm-row" href={WPP} target="_blank" rel="noopener noreferrer" onClick={onClose}>
+          <span className="cm-ico">
+            <Wpp size={20} />
+          </span>
+          <span>
+            <span className="cm-row-label">WhatsApp</span>
+            <span className="cm-row-value">(82) 99391-9961</span>
+          </span>
+        </a>
+
+        <a className="cm-row" href={`mailto:${MAIL}`} onClick={onClose}>
+          <span className="cm-ico">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+              <path d="M3 6l9 6 9-6" />
+            </svg>
+          </span>
+          <span>
+            <span className="cm-row-label">E-mail</span>
+            <span className="cm-row-value">{MAIL}</span>
+          </span>
+        </a>
+
+        <a className="cm-row" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={onClose}>
+          <span className="cm-ico">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="2" width="20" height="20" rx="5.5" />
+              <circle cx="12" cy="12" r="4.2" />
+              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <span>
+            <span className="cm-row-label">Instagram</span>
+            <span className="cm-row-value">@gbcompany</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================= *
+ *  Produtos que ainda estão em BETA (badge no canto da seção)        *
+ * ================================================================= */
+const PROD_BETA: Record<string, boolean> = {
+  finance: true,
+  lucena: true,
+};
 
 /* ================================================================= *
  *  Textos das abas de Serviços                                       *
@@ -770,7 +888,7 @@ function ServicePillsRow({
   return (
     <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
       <div
-        className="fx-pill"
+        className="fx-pill fx-pill-flat"
         data-active={isSoftware}
         onMouseEnter={() => !isSoftware && setTab(lastSoftware.current)}
         onClick={() => setTab(lastSoftware.current)}
@@ -779,7 +897,7 @@ function ServicePillsRow({
         Software sob medida
       </div>
       <div
-        className="fx-pill"
+        className="fx-pill fx-pill-flat"
         data-active={tab === "landing"}
         onMouseEnter={() => setTab("landing")}
         onClick={() => setTab("landing")}
@@ -788,7 +906,7 @@ function ServicePillsRow({
         Landing Pages
       </div>
       <div
-        className="fx-pill"
+        className="fx-pill fx-pill-flat"
         data-active={tab === "saas"}
         onMouseEnter={() => setTab("saas")}
         onClick={() => setTab("saas")}
@@ -854,7 +972,7 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
         {SOFTWARE_SUB.map(([key, label]) => (
           <div
             key={key}
-            className="fx-pill"
+            className="fx-pill fx-pill-flat"
             data-active={tab === key}
             onMouseEnter={() => setTab(key)}
             onClick={() => setTab(key)}
@@ -1120,7 +1238,7 @@ function HeroOrb() {
   );
 }
 
-function HomeScene() {
+function HomeScene({ onContato }: { onContato: () => void }) {
   const [entered, setEntered] = useState(false);
 
   useEffect(() => {
@@ -1390,30 +1508,31 @@ function HomeScene() {
           <a className="fx-nav" href="#servicos" onClick={(e) => goToSection("servicos", e)} style={{ position: "absolute", left: 371, color: "#fff", textDecoration: "none" }}>Serviços</a>
           <a className="fx-nav" href="#produtos" onClick={(e) => goToSection("produtos", e)} style={{ position: "absolute", left: 542, color: "#fff", textDecoration: "none" }}>Produtos</a>
         </nav>
-        <a
-          className="fx-cta"
-          href={WPP}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          className="hi-contato"
+          onClick={onContato}
           style={{
             position: "absolute",
             left: 1725,
             top: 17,
             width: 129,
             height: 51,
+            border: 0,
             borderRadius: 100,
             background: "#ffffff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            fontFamily: "inherit",
             fontSize: fs(22),
             fontWeight: 700,
             color: "#000000",
-            textDecoration: "none",
+            cursor: "pointer",
           }}
         >
           Contato
-        </a>
+        </button>
       </header>
     </section>
   );
