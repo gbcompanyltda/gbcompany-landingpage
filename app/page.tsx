@@ -216,6 +216,21 @@ function GenericMonitor({ variant }: { variant: "landing" | "saas" }) {
   );
 }
 
+/* Abaixo de 860px trocamos o canvas de 1920px por <MobileSite>.
+   Começa em `false` para que o HTML estático/SSR seja sempre o desktop
+   (bom pra SEO); o efeito ajusta no cliente antes do preloader sumir. */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 860px)");
+    const sync = () => setIsMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return isMobile;
+}
+
 /* ================================================================= *
  *  PÁGINA                                                            *
  * ================================================================= */
@@ -223,6 +238,7 @@ export default function Page() {
   const [servTab, setServTab] = useState<"mobile" | "webapp" | "desktop" | "landing" | "saas">("webapp");
   const [prodTab, setProdTab] = useState<"finance" | "lucena">("finance");
   const [contatoOpen, setContatoOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // "Software sob medida" lembra a última sub-opção (Mobile / Web App / Desktop)
   const lastSoftware = React.useRef<"mobile" | "webapp" | "desktop">("webapp");
@@ -253,6 +269,16 @@ export default function Page() {
 
   return (
     <>
+    {isMobile ? (
+      <MobileSite
+        onContato={() => setContatoOpen(true)}
+        servTab={servTab}
+        pickServ={pickServ}
+        prodTab={prodTab}
+        setProdTab={setProdTab}
+        lastSoftware={lastSoftware}
+      />
+    ) : (
     <div className="figma-outer" style={{ ["--canvas-h" as string]: `${CANVAS_H}px` } as React.CSSProperties}>
       <div className="figma-viewport">
         <div className="figma-canvas">
@@ -675,6 +701,7 @@ export default function Page() {
         </div>
       </div>
     </div>
+    )}
     <ContactModal open={contatoOpen} onClose={() => setContatoOpen(false)} />
     </>
   );
@@ -1737,5 +1764,288 @@ function HomeScene({ onContato }: { onContato: () => void }) {
         </button>
       </header>
     </section>
+  );
+}
+
+/* ================================================================= *
+ *  LAYOUT MOBILE (<= 860px)                                          *
+ *  Mesma informação do canvas de 1920px, mas empilhada e fluida.     *
+ *  Compartilha estado (abas de Serviços/Produtos, modal) com <Page>. *
+ * ================================================================= */
+
+/* largura da viewport — atualiza em resize/rotação */
+function useViewportWidth() {
+  const [w, setW] = useState(390);
+  useEffect(() => {
+    const sync = () => setW(window.innerWidth);
+    sync();
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", sync);
+    return () => {
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("orientationchange", sync);
+    };
+  }, []);
+  return w;
+}
+
+/* encaixa um mockup de largura fixa na coluna do mobile */
+function MScale({ base, height, avail, children }: { base: number; height: number; avail: number; children: React.ReactNode }) {
+  const k = Math.min(1, avail / base);
+  return (
+    <div className="m-scale" style={{ height: Math.round(height * k) }}>
+      <div style={{ width: base, transform: `scale(${k})` }}>{children}</div>
+    </div>
+  );
+}
+
+function MobileServiceMocks({ tab, avail }: { tab: ServTab; avail: number }) {
+  if (tab === "landing") return <div className="m-mock-full"><LandingCase /></div>;
+  if (tab === "saas")
+    return (
+      <MScale base={620} height={452} avail={avail}>
+        <GenericMonitor variant="saas" />
+      </MScale>
+    );
+  if (tab === "desktop")
+    return (
+      <div className="m-mock-full" style={{ border: "10px solid #1e1b2e", borderRadius: 14, overflow: "hidden" }}>
+        <img src={A("servicos-screen.png")} alt="Seu projeto aqui" style={{ display: "block", width: "100%" }} />
+      </div>
+    );
+  if (tab === "webapp")
+    return (
+      <div className="m-mocks">
+        <img className="m-mock-img" src={A("mockup-note.png")} alt="Seu projeto aqui" />
+        <img className="m-mock-img" src={A("mockup-mobile.png")} alt="Seu projeto aqui" />
+      </div>
+    );
+  return (
+    <div className="m-mocks">
+      <img className="m-mock-img m-mock-solo" src={A("mockup-mobile.png")} alt="Seu projeto aqui" />
+    </div>
+  );
+}
+
+function MobileProductMocks({ tab }: { tab: "finance" | "lucena" }) {
+  return (
+    <div className="m-mocks">
+      {tab === "finance" ? (
+        <>
+          <img className="m-mock-img" src={A("mockup-finance-1.png")} alt="App Finance" />
+          <img className="m-mock-img" src={A("mockup-finance-2.png")} alt="App Finance" />
+        </>
+      ) : (
+        <>
+          <img className="m-mock-img m-mock-full" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ maxWidth: "80%" }} />
+          <img className="m-mock-img" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ maxWidth: "40%" }} />
+        </>
+      )}
+    </div>
+  );
+}
+
+function MobileSite({
+  onContato,
+  servTab,
+  pickServ,
+  prodTab,
+  setProdTab,
+  lastSoftware,
+}: {
+  onContato: () => void;
+  servTab: ServTab;
+  pickServ: (t: ServTab) => void;
+  prodTab: "finance" | "lucena";
+  setProdTab: (t: "finance" | "lucena") => void;
+  lastSoftware: React.RefObject<"mobile" | "webapp" | "desktop">;
+}) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const vw = useViewportWidth();
+  const avail = Math.min(560, vw) - 40; // padding lateral da seção = 20 + 20
+  const isSoftware = servTab === "mobile" || servTab === "webapp" || servTab === "desktop";
+
+  const goNav = (id: string) => (e: React.MouseEvent) => {
+    setMenuOpen(false);
+    goToSection(id, e);
+  };
+
+  const prodAccent = prodTab === "finance" ? "#171e57" : "#6b0f14";
+
+  return (
+    <div className="m-site">
+      {/* ---------- HEADER ---------- */}
+      <header className="m-header">
+        <img src={A("logo.png")} alt="GB Company" />
+        <button
+          type="button"
+          className="m-burger"
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          {menuOpen ? "×" : "☰"}
+        </button>
+        <nav className="m-nav" data-open={menuOpen}>
+          <a href="#home" onClick={goNav("home")}>Home</a>
+          <a href="#servicos" onClick={goNav("servicos")}>Serviços</a>
+          <a href="#produtos" onClick={goNav("produtos")}>Produtos</a>
+          <button type="button" onClick={() => { setMenuOpen(false); onContato(); }}>Contato</button>
+        </nav>
+      </header>
+
+      {/* ---------- HERO ---------- */}
+      <section className="m-hero" id="home">
+        <span className="m-hero-orb" />
+        <div className="m-inner">
+          <h1>Software sob medida para o seu negócio crescer</h1>
+          <p className="m-lead">
+            Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
+          </p>
+          <ul className="m-chips">
+            {SERVICES.map((s) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+          <a className="m-cta" href={WPP} target="_blank" rel="noopener noreferrer">
+            Falar com um especialista <Wpp size={22} color="#fff" />
+          </a>
+          <img className="m-hero-img" src={A("mockup-home.png")} alt="Prévia do sistema" />
+        </div>
+      </section>
+
+      {/* ---------- SERVIÇOS ---------- */}
+      <section className="m-sec m-serv" id="servicos">
+        <div className="m-inner">
+          <h2>Nossos principais serviços</h2>
+          <p className="m-lead">
+            Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
+          </p>
+
+          <div className="m-pills">
+            <button type="button" className="m-pill" data-active={isSoftware} onClick={() => pickServ(lastSoftware.current)}>
+              Software sob medida
+            </button>
+            <button type="button" className="m-pill" data-active={servTab === "landing"} onClick={() => pickServ("landing")}>
+              Landing Pages
+            </button>
+            <button type="button" className="m-pill" data-active={servTab === "saas"} onClick={() => pickServ("saas")}>
+              SaaS
+            </button>
+          </div>
+
+          {isSoftware && (
+            <div className="m-pills m-subpills">
+              {SOFTWARE_SUB.map(([key, label]) => (
+                <button key={key} type="button" className="m-pill" data-active={servTab === key} onClick={() => pickServ(key)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="m-card m-card-purple">
+            <p key={servTab} className="anim-fade">{SERVICE_TEXT[servTab]}</p>
+            <div className="m-card-foot">{SERVICE_PILL_TITLE[servTab]}</div>
+          </div>
+
+          <MobileServiceMocks tab={servTab} avail={avail} />
+        </div>
+      </section>
+
+      {/* ---------- BRIEFING ---------- */}
+      <section className="m-sec m-brief" id="briefing">
+        <div className="m-inner">
+          <span className="m-eyebrow">Briefing</span>
+          <h2>Entendemos o seu problema e entregamos a solução</h2>
+          <p className="m-lead">
+            A GB Company faz o briefing do que a sua empresa precisa, mergulha no seu problema e resolve com um sistema sob medida — feito para atender exatamente às suas exigências.
+          </p>
+          <a className="m-cta" href={WPP} target="_blank" rel="noopener noreferrer">
+            Falar com um especialista <Wpp size={22} color="#fff" />
+          </a>
+          <img className="m-brief-img" src={A("briefing.png")} alt="Equipe da GB Company em reunião de briefing com clientes" />
+        </div>
+      </section>
+
+      {/* ---------- PRODUTOS ---------- */}
+      <section className="m-sec m-prod" data-prod={prodTab} id="produtos">
+        {PROD_BETA[prodTab] && <span className="m-beta">BETA</span>}
+        <div className="m-inner">
+          <h2>Um pouco da gbcompany</h2>
+          <p className="m-lead">Alguns dos produtos que já construímos e mantemos no ar.</p>
+
+          <div className="m-pills m-pills-dark">
+            <button
+              type="button"
+              className="m-pill"
+              data-active={prodTab === "lucena"}
+              style={prodTab === "lucena" ? { background: "#fff", color: prodAccent } : undefined}
+              onClick={() => setProdTab("lucena")}
+            >
+              Rede Lucena
+            </button>
+            <button
+              type="button"
+              className="m-pill"
+              data-active={prodTab === "finance"}
+              style={prodTab === "finance" ? { background: "#fff", color: prodAccent } : undefined}
+              onClick={() => setProdTab("finance")}
+            >
+              Finance
+            </button>
+          </div>
+
+          <div className="m-card m-card-white">
+            <p key={prodTab} className="anim-fade" style={{ color: prodAccent }}>
+              {prodTab === "finance"
+                ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
+                : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
+            </p>
+          </div>
+
+          <MobileProductMocks tab={prodTab} />
+        </div>
+      </section>
+
+      {/* ---------- FECHAMENTO ---------- */}
+      <section className="m-sec m-close">
+        <span className="m-eyebrow">Fale conosco</span>
+        <p className="m-close-title">
+          Ajudamos a sua empresa a alavancar os números com sistemas inteligentes.
+        </p>
+        <a className="m-cta m-cta-white" href={WPP} target="_blank" rel="noopener noreferrer">
+          <Wpp size={22} color="#5672f8" /> Chamar no WhatsApp
+        </a>
+      </section>
+
+      {/* ---------- FOOTER ---------- */}
+      <footer className="m-footer">
+        <img src={A("logo.png")} alt="GB Company" />
+        <p className="m-verse">
+          &quot;Falou-lhes, pois, Jesus outra vez, dizendo: Eu sou a luz do mundo; quem me segue não andará em trevas, mas terá a luz da vida&quot;.
+        </p>
+        <p className="m-verse-ref">João 8:12</p>
+        <div className="m-social">
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "#8d57f8" }}>
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2" y="2" width="20" height="20" rx="5.5" />
+              <circle cx="12" cy="12" r="4.2" />
+              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
+          <a href={`mailto:${MAIL}`} aria-label="E-mail" style={{ color: "#5672f8" }}>
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
+              <path d="M3 6l9 6 9-6" />
+            </svg>
+          </a>
+          <a href={WPP} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" style={{ color: "#000" }}>
+            <Wpp size={30} color="#000" />
+          </a>
+        </div>
+        <p className="m-copy">Copyright 2026</p>
+      </footer>
+    </div>
   );
 }

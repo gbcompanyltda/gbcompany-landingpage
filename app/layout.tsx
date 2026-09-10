@@ -85,6 +85,8 @@ export default function RootLayout({
             {/* faixa de código no rodapé da seção */}
             <span className="sk sk-strip" style={{ left: 0, top: 987, width: 1920, height: 96, borderRadius: 0 }} />
           </div>
+          {/* preloader mobile — só o logo pulsando no centro */}
+          <img className="m-preload-logo" src={`${basePath}/figma/logo.png`} alt="" aria-hidden="true" />
         </div>
         {children}
       </body>
