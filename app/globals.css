@@ -225,8 +225,8 @@ html {
   transition: transform .38s cubic-bezier(.16, 1, .3, 1), filter .38s ease;
 }
 .fx-mock:hover {
-  transform: translateY(-10px) scale(1.015) rotate(-.4deg);
-  filter: drop-shadow(0 38px 56px rgba(24, 20, 46, .3));
+  transform: translateY(-8px) rotate(-.35deg);
+  filter: drop-shadow(0 34px 52px rgba(24, 20, 46, .28));
 }
 
 .fx-nav { position: relative; }

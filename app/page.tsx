@@ -767,14 +767,14 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
       style={{
         position: "absolute",
         left: 824,
-        top: 150,
+        top: 372,
         width: 1020,
-        height: 830,
+        height: 620,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 30,
+        gap: 28,
       }}
     >
       <div
@@ -783,7 +783,7 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
         style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 40 }}
       >
         {tab === "landing" && (
-          <div className="fx-mock" style={{ width: 940 }}>
+          <div className="fx-mock" style={{ width: 860 }}>
             <LandingCase />
           </div>
         )}
@@ -799,12 +799,12 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
         )}
         {tab === "webapp" && (
           <>
-            <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ width: 620, display: "block" }} />
-            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 240, display: "block" }} />
+            <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ width: 560, display: "block" }} />
+            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 190, display: "block" }} />
           </>
         )}
         {tab === "mobile" && (
-          <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 300, display: "block" }} />
+          <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ width: 224, display: "block" }} />
         )}
       </div>
 
@@ -813,11 +813,11 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
         style={{
           display: "flex",
           gap: 12,
-          height: 46,
+          height: isSoftware ? 46 : 0,
           opacity: isSoftware ? 1 : 0,
           transform: isSoftware ? "translateY(0)" : "translateY(8px)",
           pointerEvents: isSoftware ? "auto" : "none",
-          transition: "opacity .25s ease, transform .25s ease",
+          transition: "opacity .25s ease, transform .25s ease, height .25s ease",
         }}
       >
         {SOFTWARE_SUB.map(([key, label]) => (
