@@ -10,8 +10,9 @@ const WPP = "https://wa.me/82993919961";
 
 const CANVAS_W = 1920;
 
-/* fator global de tipografia — reduz todas as fontes de uma vez */
-const FS = 0.78;
+/* fator global de tipografia — reduz todas as fontes de uma vez
+   (Courier Prime é monoespaçada e mais larga, então o fator é menor) */
+const FS = 0.66;
 const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
 const HOME_H = 1083;
@@ -267,79 +268,93 @@ export default function Page() {
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.1, pointerEvents: "none" }}
           />
 
-          <h2 style={{ position: "absolute", left: 120, top: 52, width: 760, margin: 0, fontSize: fs(52), lineHeight: 1.08, fontWeight: 700, color: "#000" }}>
+          <h2 style={{ position: "absolute", left: 120, top: 52, width: 900, margin: 0, fontSize: fs(52), lineHeight: 1.08, fontWeight: 700, color: "#000" }}>
             Nossos principais serviços
           </h2>
-          <p style={{ position: "absolute", left: 123, top: 138, width: 600, margin: 0, fontSize: fs(20), lineHeight: 1.4, fontWeight: 700, color: "#000" }}>
+          <p style={{ position: "absolute", left: 123, top: 130, width: 620, margin: 0, fontSize: fs(20), lineHeight: 1.4, fontWeight: 700, color: "#000" }}>
             Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
           </p>
 
-          {/* Coluna esquerda: pills (uma ao lado da outra) + cardbox */}
-          <div style={{ position: "absolute", left: 120, top: 220, width: 690 }}>
-            <ServicePillsRow tab={servTab} setTab={pickServ} lastSoftware={lastSoftware} />
-
-            {/* Cardbox roxo — texto do serviço + faixa branca com o título */}
-            <div
-              className="fx-lift"
-              style={{
-                position: "relative",
-                marginTop: 22,
-                width: 690,
-                height: 344,
-                borderRadius: 40,
-                background: "#8d57f8",
-                overflow: "hidden",
-                boxShadow: "0 44px 90px -34px rgba(141,87,248,.55)",
-              }}
-            >
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 82,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "0 44px",
-                }}
-              >
-                <p
-                  key={servTab}
-                  className="anim-fade"
-                  style={{ margin: 0, textAlign: "center", fontSize: fs(23), lineHeight: 1.34, fontWeight: 700, color: "#fff" }}
-                >
-                  {SERVICE_TEXT[servTab]}
-                </p>
-              </div>
+          {/* Duas colunas centralizadas na mesma linha horizontal */}
+          <div
+            style={{
+              position: "absolute",
+              left: 120,
+              right: 76,
+              top: 208,
+              height: 486,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 44,
+            }}
+          >
+            {/* Coluna esquerda: pills + cardbox */}
+            <div style={{ width: 660, flex: "none" }}>
+              <ServicePillsRow tab={servTab} setTab={pickServ} lastSoftware={lastSoftware} />
 
               <div
+                className="fx-lift"
                 style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: 82,
-                  background: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  position: "relative",
+                  marginTop: 20,
+                  width: 660,
+                  height: 328,
+                  borderRadius: 40,
+                  background: "#8d57f8",
+                  overflow: "hidden",
+                  boxShadow: "0 44px 90px -34px rgba(141,87,248,.55)",
                 }}
               >
-                <p
-                  key={servTab}
-                  className="anim-fade"
-                  style={{ margin: 0, textAlign: "center", fontSize: fs(30), fontWeight: 700, color: "#000", whiteSpace: "nowrap" }}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    bottom: 78,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 42px",
+                  }}
                 >
-                  {SERVICE_PILL_TITLE[servTab]}
-                </p>
+                  <p
+                    key={servTab}
+                    className="anim-fade"
+                    style={{ margin: 0, textAlign: "center", fontSize: fs(22), lineHeight: 1.36, fontWeight: 700, color: "#fff" }}
+                  >
+                    {SERVICE_TEXT[servTab]}
+                  </p>
+                </div>
+
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: 78,
+                    background: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <p
+                    key={servTab}
+                    className="anim-fade"
+                    style={{ margin: 0, textAlign: "center", fontSize: fs(28), fontWeight: 700, color: "#000", whiteSpace: "nowrap" }}
+                  >
+                    {SERVICE_PILL_TITLE[servTab]}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Coluna direita: mockups + sub-abas */}
-          <ServiceMockups tab={servTab} setTab={pickServ} />
+            {/* Coluna direita: mockups + sub-abas */}
+            <ServiceMockups tab={servTab} setTab={pickServ} />
+          </div>
         </section>
 
         {/* =========================== BRIEFING =========================== */}
@@ -465,59 +480,74 @@ export default function Page() {
           <h2 style={{ position: "absolute", left: 120, top: 52, width: 900, margin: 0, fontSize: fs(52), lineHeight: 1.08, fontWeight: 700, color: "#fff" }}>
             Um pouco da gbcompany
           </h2>
-          <p style={{ position: "absolute", left: 123, top: 138, width: 600, margin: 0, fontSize: fs(20), lineHeight: 1.4, fontWeight: 700, color: "rgba(255,255,255,0.75)" }}>
+          <p style={{ position: "absolute", left: 123, top: 130, width: 620, margin: 0, fontSize: fs(20), lineHeight: 1.4, fontWeight: 700, color: "rgba(255,255,255,0.75)" }}>
             Alguns dos produtos que já construímos e mantemos no ar.
           </p>
 
-          {/* Coluna esquerda: pills (uma ao lado da outra) + cardbox */}
-          <div style={{ position: "absolute", left: 120, top: 220, width: 690 }}>
-            <ProductPills tab={prodTab} setTab={setProdTab} />
+          {/* Duas colunas centralizadas na mesma linha horizontal */}
+          <div
+            style={{
+              position: "absolute",
+              left: 120,
+              right: 76,
+              top: 208,
+              height: 486,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 44,
+            }}
+          >
+            {/* Coluna esquerda: pills + cardbox */}
+            <div style={{ width: 660, flex: "none" }}>
+              <ProductPills tab={prodTab} setTab={setProdTab} />
 
-            <div
-              className="fx-lift"
-              style={{
-                position: "relative",
-                marginTop: 22,
-                width: 690,
-                height: 344,
-                borderRadius: 40,
-                background: "#fff",
-                overflow: "hidden",
-                boxShadow: "0 44px 90px -34px rgba(0,0,0,.45)",
-              }}
-            >
               <div
+                className="fx-lift"
                 style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "0 48px",
+                  position: "relative",
+                  marginTop: 20,
+                  width: 660,
+                  height: 328,
+                  borderRadius: 40,
+                  background: "#fff",
+                  overflow: "hidden",
+                  boxShadow: "0 44px 90px -34px rgba(0,0,0,.45)",
                 }}
               >
-                <p
-                  key={prodTab}
-                  className="anim-fade"
+                <div
                   style={{
-                    margin: 0,
-                    textAlign: "center",
-                    fontSize: fs(22),
-                    lineHeight: 1.4,
-                    fontWeight: 700,
-                    color: prodTab === "finance" ? "#171e57" : "#6b0f14",
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "0 44px",
                   }}
                 >
-                  {prodTab === "finance"
-                    ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
-                    : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
-                </p>
+                  <p
+                    key={prodTab}
+                    className="anim-fade"
+                    style={{
+                      margin: 0,
+                      textAlign: "center",
+                      fontSize: fs(21),
+                      lineHeight: 1.42,
+                      fontWeight: 700,
+                      color: prodTab === "finance" ? "#171e57" : "#6b0f14",
+                    }}
+                  >
+                    {prodTab === "finance"
+                      ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
+                      : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Coluna direita: mockups */}
-          <ProductShowcase tab={prodTab} />
+            {/* Coluna direita: mockups */}
+            <ProductShowcase tab={prodTab} />
+          </div>
         </section>
 
         {/* ========================== FECHAMENTO ========================= */}
@@ -776,38 +806,35 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
   return (
     <div
       style={{
-        position: "absolute",
-        left: 824,
-        top: 300,
-        width: 1020,
+        flex: 1,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 20,
+        gap: 16,
       }}
     >
-      {/* Mockups — faixa de altura fixa, sempre abaixo da linha das pills */}
-      <div style={{ height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      {/* Mockups — faixa de altura fixa */}
+      <div style={{ height: 336, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div
           key={tab}
           className="anim-card"
-          style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 36 }}
+          style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 32 }}
         >
           {tab === "landing" && (
-            <div className="fx-mock" style={{ width: 540 }}>
+            <div className="fx-mock" style={{ width: 460 }}>
               <LandingCase />
             </div>
           )}
-          {tab === "saas" && <Scaled k={0.85} w={620} h={448}><GenericMonitor variant="saas" /></Scaled>}
-          {tab === "desktop" && <Scaled k={0.78} w={640} h={490}><DesktopMockup /></Scaled>}
+          {tab === "saas" && <Scaled k={0.73} w={620} h={448}><GenericMonitor variant="saas" /></Scaled>}
+          {tab === "desktop" && <Scaled k={0.66} w={640} h={490}><DesktopMockup /></Scaled>}
           {tab === "webapp" && (
             <>
-              <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ height: 330, width: "auto", display: "block" }} />
-              <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 360, width: "auto", display: "block" }} />
+              <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ height: 280, width: "auto", display: "block" }} />
+              <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 310, width: "auto", display: "block" }} />
             </>
           )}
           {tab === "mobile" && (
-            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 388, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 330, width: "auto", display: "block" }} />
           )}
         </div>
       </div>
@@ -817,7 +844,7 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
         style={{
           display: "flex",
           gap: 12,
-          height: 46,
+          height: 44,
           opacity: isSoftware ? 1 : 0,
           transform: isSoftware ? "translateY(0)" : "translateY(8px)",
           pointerEvents: isSoftware ? "auto" : "none",
@@ -832,9 +859,9 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
             onMouseEnter={() => setTab(key)}
             onClick={() => setTab(key)}
             style={{
-              height: 46,
+              height: 44,
               borderRadius: 100,
-              fontSize: fs(18),
+              fontSize: fs(17),
               fontWeight: 700,
               display: "inline-flex",
               alignItems: "center",
@@ -859,32 +886,21 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
 /* --- Mockups de Produtos (coluna direita) --------------------- */
 function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
   return (
-    <div
-      style={{
-        position: "absolute",
-        left: 824,
-        top: 300,
-        width: 1020,
-        height: 420,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div style={{ flex: 1, height: 336, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div
         key={tab}
         className="anim-card"
-        style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 36 }}
+        style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 32 }}
       >
         {tab === "finance" ? (
           <>
-            <img className="fx-mock" src={A("mockup-finance-1.png")} alt="App Finance" style={{ height: 372, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="App Finance" style={{ height: 372, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-finance-1.png")} alt="App Finance" style={{ height: 320, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="App Finance" style={{ height: 320, width: "auto", display: "block" }} />
           </>
         ) : (
           <>
-            <img className="fx-mock" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ height: 300, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ height: 372, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ height: 262, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ height: 320, width: "auto", display: "block" }} />
           </>
         )}
       </div>

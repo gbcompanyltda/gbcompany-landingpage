@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Courier_Prime } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const courierPrime = Courier_Prime({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
 });
 
@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={inter.variable} suppressHydrationWarning>
+    <html lang="pt-BR" className={courierPrime.variable} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
         <div id="page-preloader" aria-hidden="true">
