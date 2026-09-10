@@ -12,7 +12,7 @@ const CANVAS_W = 1920;
 
 /* fator global de tipografia — reduz todas as fontes de uma vez
    (Archivo Black é bem larga e pesada, então o fator é bem menor) */
-const FS = 0.58;
+const FS = 0.62;
 const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
 const HOME_H = 1083;
