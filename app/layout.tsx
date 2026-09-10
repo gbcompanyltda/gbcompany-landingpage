@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Courier_Prime } from "next/font/google";
+import { Archivo_Black } from "next/font/google";
 import "./globals.css";
 
-const courierPrime = Courier_Prime({
+const archivoBlack = Archivo_Black({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
+  weight: ["400"],
+  style: ["normal"],
 });
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={courierPrime.variable} suppressHydrationWarning>
+    <html lang="pt-BR" className={archivoBlack.variable} suppressHydrationWarning>
       <body>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
         <div id="page-preloader" aria-hidden="true">

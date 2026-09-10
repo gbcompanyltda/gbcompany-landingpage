@@ -14,7 +14,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), "Courier Prime", "Courier New", ui-monospace, monospace;
+  font-family: var(--font-inter), "Archivo Black", "Arial Black", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 

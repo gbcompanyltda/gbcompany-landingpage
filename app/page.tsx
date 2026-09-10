@@ -11,8 +11,8 @@ const WPP = "https://wa.me/82993919961";
 const CANVAS_W = 1920;
 
 /* fator global de tipografia — reduz todas as fontes de uma vez
-   (Courier Prime é monoespaçada e mais larga, então o fator é menor) */
-const FS = 0.66;
+   (Archivo Black é bem larga e pesada, então o fator é bem menor) */
+const FS = 0.58;
 const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
 const HOME_H = 1083;
