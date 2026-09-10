@@ -410,7 +410,7 @@ export default function Page() {
 
           {/* CTA WhatsApp */}
           <a
-            className="fx-cta"
+            className="fx-cta fx-cta-blue"
             href={WPP}
             target="_blank"
             rel="noopener noreferrer"
@@ -418,7 +418,7 @@ export default function Page() {
               position: "absolute",
               left: 123,
               top: 656,
-              width: 389,
+              width: 470,
               height: 77,
               borderRadius: 10,
               background: "#8d57f8",
@@ -430,9 +430,10 @@ export default function Page() {
               fontSize: fs(24),
               fontWeight: 700,
               color: "#ffffff",
+              whiteSpace: "nowrap",
             }}
           >
-            Chamar no WhatsApp
+            Falar com um especialista
             <Wpp size={30} color="#ffffff" />
           </a>
 
@@ -484,8 +485,8 @@ export default function Page() {
               className="prod-beta"
               style={{
                 position: "absolute",
-                left: 120,
-                top: 16,
+                right: 120,
+                top: 60,
                 fontSize: fs(13),
                 fontWeight: 700,
                 letterSpacing: 1.5,
@@ -579,7 +580,7 @@ export default function Page() {
             top: HOME_H + SERV_H + BRIEF_H + PROD_H,
             width: CANVAS_W,
             height: FECH_H,
-            background: "#8d57f8",
+            background: "#5672f8",
             overflow: "hidden",
             display: "flex",
             flexDirection: "column",
@@ -604,13 +605,13 @@ export default function Page() {
           </span>
 
           <div style={{ background: "#fff", borderRadius: 100, padding: "14px 28px", position: "relative" }}>
-            <span style={{ fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#8d57f8" }}>Fale conosco</span>
+            <span style={{ fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#5672f8" }}>Fale conosco</span>
           </div>
           <p style={{ width: 1300, margin: 0, textAlign: "center", fontSize: fs(48), fontWeight: 700, color: "#fff", position: "relative" }}>
             Ajudamos a sua empresas a alavancar os números com sistemas inteligentes.
           </p>
           <a
-            className="fx-cta"
+            className="fx-cta fx-cta-purple"
             href={WPP}
             target="_blank"
             rel="noopener noreferrer"
@@ -625,8 +626,8 @@ export default function Page() {
               position: "relative",
             }}
           >
-            <Wpp size={32} color="#8d57f8" />
-            <span style={{ fontSize: fs(28), fontWeight: 700, color: "#8d57f8" }}>Chamar no WhatsApp</span>
+            <Wpp size={32} color="#5672f8" />
+            <span style={{ fontSize: fs(28), fontWeight: 700, color: "#5672f8" }}>Chamar no WhatsApp</span>
           </a>
         </section>
 
@@ -642,8 +643,8 @@ export default function Page() {
             overflow: "hidden",
           }}
         >
-          <img src={A("logo.png")} alt="GB Company" style={{ position: "absolute", left: 125, top: 81, width: 90, height: 90 }} />
-          <p style={{ position: "absolute", left: 73, top: 208, width: 194, margin: 0, fontSize: fs(24), fontWeight: 700, color: "#6c6969" }}>
+          <img src={A("logo.png")} alt="GB Company" style={{ position: "absolute", left: 165, top: 81, width: 90, height: 90 }} />
+          <p style={{ position: "absolute", left: 110, top: 208, width: 200, margin: 0, fontSize: fs(24), fontWeight: 700, color: "#6c6969", textAlign: "center" }}>
             Copyright 2026
           </p>
           <p style={{ position: "absolute", left: 594, top: 117, width: 731, margin: 0, fontSize: fs(22), fontWeight: 700, fontStyle: "italic", color: "#000", textAlign: "center" }}>
@@ -661,7 +662,7 @@ export default function Page() {
               <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
             </svg>
           </a>
-          <a href={`mailto:${"gbcompanyltda@gmail.com"}`} aria-label="E-mail" style={{ position: "absolute", left: 1638, top: 121, width: 48, height: 48, color: "#8d57f8" }}>
+          <a href={`mailto:${"gbcompanyltda@gmail.com"}`} aria-label="E-mail" style={{ position: "absolute", left: 1638, top: 121, width: 48, height: 48, color: "#5672f8" }}>
             <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
               <path d="M3 6l9 6 9-6" />
@@ -932,27 +933,27 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
       }}
     >
       {/* Mockups — faixa de altura fixa */}
-      <div style={{ height: 336, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div
           key={tab}
           className="anim-card"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 32 }}
         >
           {tab === "landing" && (
-            <div className="fx-mock" style={{ width: 460 }}>
+            <div className="fx-mock" style={{ width: 580 }}>
               <LandingCase />
             </div>
           )}
-          {tab === "saas" && <Scaled k={0.73} w={620} h={448}><GenericMonitor variant="saas" /></Scaled>}
-          {tab === "desktop" && <Scaled k={0.66} w={640} h={490}><DesktopMockup /></Scaled>}
+          {tab === "saas" && <Scaled k={0.92} w={620} h={448}><GenericMonitor variant="saas" /></Scaled>}
+          {tab === "desktop" && <Scaled k={0.83} w={640} h={490}><DesktopMockup /></Scaled>}
           {tab === "webapp" && (
             <>
-              <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ height: 280, width: "auto", display: "block" }} />
-              <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 310, width: "auto", display: "block" }} />
+              <img className="fx-mock" src={A("mockup-note.png")} alt="Seu projeto aqui" style={{ height: 353, width: "auto", display: "block" }} />
+              <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 391, width: "auto", display: "block" }} />
             </>
           )}
           {tab === "mobile" && (
-            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 330, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-mobile.png")} alt="Seu projeto aqui" style={{ height: 416, width: "auto", display: "block" }} />
           )}
         </div>
       </div>
@@ -1004,7 +1005,7 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
 /* --- Mockups de Produtos (coluna direita) --------------------- */
 function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
   return (
-    <div style={{ flex: 1, height: 336, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ flex: 1, height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div
         key={tab}
         className="anim-card"
@@ -1012,13 +1013,13 @@ function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
       >
         {tab === "finance" ? (
           <>
-            <img className="fx-mock" src={A("mockup-finance-1.png")} alt="App Finance" style={{ height: 320, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="App Finance" style={{ height: 320, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-finance-1.png")} alt="App Finance" style={{ height: 403, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="App Finance" style={{ height: 403, width: "auto", display: "block" }} />
           </>
         ) : (
           <>
-            <img className="fx-mock" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ height: 262, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ height: 320, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ height: 330, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ height: 403, width: "auto", display: "block" }} />
           </>
         )}
       </div>
@@ -1192,12 +1193,153 @@ function playToProdutos(e: React.MouseEvent) {
   goToSection("produtos");
 }
 
-/* círculo azul do hero com linhas, pontos, conexões e mini-UI girando */
-function HeroOrb() {
-  const dots: [number, number, number][] = [
-    [300, 210, 4], [770, 300, 3], [560, 130, 5], [850, 640, 3], [210, 560, 4],
-    [650, 800, 3], [440, 470, 6], [910, 430, 2.5], [360, 360, 3], [720, 560, 3.5],
+/* círculo azul do hero — rede de conexões "cerebrais" com um ícone em cada nó */
+
+/* ícones desenhados num quadro 0..24, centro em (12,12) */
+const ORB_ICONS: React.ReactNode[] = [
+  /* 0 — dinheiro ($ >) */
+  (
+    <g key="i0">
+      <text
+        x="9"
+        y="12.5"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontFamily="ui-monospace, Menlo, Consolas, monospace"
+        fontSize="15"
+        fontWeight="700"
+        fill="rgba(255,255,255,0.95)"
+        stroke="none"
+      >
+        $
+      </text>
+      <path d="M15 8l4 4-4 4" />
+    </g>
+  ),
+  /* 1 — alavancar (curva de crescimento) */
+  (
+    <g key="i1">
+      <path d="M3 17l6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </g>
+  ),
+  /* 2 — usuários */
+  (
+    <g key="i2">
+      <circle cx="9" cy="8" r="3" />
+      <path d="M3.5 19c0-3 2.5-5.2 5.5-5.2S14.5 16 14.5 19" />
+      <circle cx="16.6" cy="9" r="2.3" />
+      <path d="M15.2 14c2.7-.1 5 1.9 5 5" />
+    </g>
+  ),
+  /* 3 — transações */
+  (
+    <g key="i3">
+      <path d="M4 9h14" />
+      <path d="M14 5l4 4-4 4" />
+      <path d="M20 15H6" />
+      <path d="M10 11l-4 4 4 4" />
+    </g>
+  ),
+  /* 4 — smartphone */
+  (
+    <g key="i4">
+      <rect x="7" y="2.5" width="10" height="19" rx="2.6" />
+      <path d="M10.5 18.4h3" />
+    </g>
+  ),
+  /* 5 — dashboard */
+  (
+    <g key="i5">
+      <rect x="3.6" y="3.6" width="7.4" height="7.4" rx="1.6" />
+      <rect x="13" y="3.6" width="7.4" height="7.4" rx="1.6" />
+      <rect x="3.6" y="13" width="7.4" height="7.4" rx="1.6" />
+      <rect x="13" y="13" width="7.4" height="7.4" rx="1.6" />
+    </g>
+  ),
+  /* 6 — carrinho */
+  (
+    <g key="i6">
+      <path d="M3 4h2l2.5 11.5a1.6 1.6 0 0 0 1.6 1.3h8a1.6 1.6 0 0 0 1.6-1.3L21 7.5H6" />
+      <circle cx="9.5" cy="20" r="1.5" />
+      <circle cx="17.5" cy="20" r="1.5" />
+    </g>
+  ),
+];
+
+/* =============================================================== *
+ *  Círculo do hero — "circuitos cerebrais": malha neural densa de   *
+ *  partículas + linhas finas + 7 ícones pequenos. Tudo gira junto   *
+ *  com o círculo, em opacidade baixa (parece fazer parte da esfera).*
+ * =============================================================== */
+const ORB_CENTER = 520;
+const ORB_R = 500;
+
+/* hash inteiro determinístico (idêntico no servidor e no cliente — evita
+   qualquer divergência de hidratação em valores serializados no SVG) */
+function orbRand(i: number, ch: number) {
+  let h = Math.imul(i + 1, 2654435761) ^ Math.imul(ch + 1, 40503);
+  h = Math.imul(h ^ (h >>> 15), 2246822519);
+  h = Math.imul(h ^ (h >>> 13), 3266489917);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/* partículas espalhadas pelo disco (espiral áurea + jitter) */
+const ORB_PARTICLES: [number, number][] = Array.from({ length: 66 }, (_, i) => {
+  const t = (i + 0.7) / 66;
+  const rad = Math.min(ORB_R, ORB_R * Math.sqrt(t) * (0.66 + orbRand(i, 0) * 0.48));
+  const ang = i * 2.399963 + orbRand(i, 1) * 1.3;
+  return [
+    Math.round(ORB_CENTER + Math.cos(ang) * rad),
+    Math.round(ORB_CENTER + Math.sin(ang) * rad),
   ];
+});
+
+/* nós com ícone — pequenos, e também fazem parte da malha */
+const ORB_NODES: [number, number][] = ORB_ICONS.map((_, i) => {
+  const n = ORB_ICONS.length;
+  const ang = (i / n) * Math.PI * 2 + (i % 2 ? 0.5 : -0.32);
+  const rad = [360, 235, 430, 300, 195, 400, 465][i];
+  return [
+    Math.round(ORB_CENTER + Math.cos(ang) * rad),
+    Math.round(ORB_CENTER + Math.sin(ang) * rad),
+  ];
+});
+
+/* todos os pontos da malha: partículas primeiro, ícones depois */
+const ORB_POINTS: [number, number][] = [...ORB_PARTICLES, ...ORB_NODES];
+
+/* arestas: liga cada ponto aos vizinhos mais próximos dentro de um raio */
+const ORB_MESH: [number, number][] = (() => {
+  const seen = new Set<string>();
+  const out: [number, number][] = [];
+  ORB_POINTS.forEach((p, i) => {
+    const near = ORB_POINTS
+      .map((q, j) => [j, Math.hypot(p[0] - q[0], p[1] - q[1])] as [number, number])
+      .filter(([j, d]) => j !== i && d < 165)
+      .sort((a, b) => a[1] - b[1])
+      .slice(0, 3);
+    near.forEach(([j]) => {
+      const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        out.push(i < j ? [i, j] : [j, i]);
+      }
+    });
+  });
+  return out;
+})();
+
+/* algumas arestas ganham pulso viajante */
+const ORB_PULSE_EDGES = [3, 19, 37, 58, 74].filter((k) => k < ORB_MESH.length);
+
+/* números soltos girando junto (estética de "dados/circuito") */
+const ORB_NUMS = ["2343", "4499", "3180", "512", "1024", "2931"].map((v, i) => {
+  const p = ORB_PARTICLES[(i * 8 + 5) % ORB_PARTICLES.length];
+  return { v, x: p[0] + 12, y: p[1] - 9 };
+});
+
+function HeroOrb() {
   return (
     <div
       className="hi-orb"
@@ -1212,24 +1354,87 @@ function HeroOrb() {
             </clipPath>
           </defs>
           <g clipPath="url(#hi-orb-clip)">
+            {/* anéis de profundidade girando devagar, ao fundo */}
             <g className="orb-spin" style={{ transformOrigin: "520px 520px" }}>
-              <circle cx="520" cy="520" r="470" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1.5" />
-              <circle cx="520" cy="520" r="330" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" strokeDasharray="4 16" />
-              <line x1="300" y1="210" x2="560" y2="130" stroke="rgba(255,255,255,0.13)" strokeWidth="1" />
-              <line x1="560" y1="130" x2="770" y2="300" stroke="rgba(255,255,255,0.09)" strokeWidth="1" />
-              <line x1="440" y1="470" x2="650" y2="800" stroke="rgba(255,255,255,0.09)" strokeWidth="1" />
-              <line x1="440" y1="470" x2="210" y2="560" stroke="rgba(255,255,255,0.11)" strokeWidth="1" />
-              {dots.map(([cx, cy, r], i) => (
-                <circle key={i} cx={cx} cy={cy} r={r} fill="rgba(255,255,255,0.5)" />
-              ))}
-              <rect x="235" y="700" width="150" height="46" rx="10" fill="rgba(255,255,255,0.1)" />
-              <rect x="251" y="716" width="72" height="8" rx="4" fill="rgba(255,255,255,0.35)" />
-              <rect x="690" y="175" width="120" height="82" rx="12" fill="rgba(255,255,255,0.09)" />
-              <circle cx="712" cy="200" r="9" fill="rgba(255,255,255,0.4)" />
-              <rect x="726" y="196" width="60" height="8" rx="4" fill="rgba(255,255,255,0.3)" />
+              <circle cx="520" cy="520" r="470" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" />
+              <circle cx="520" cy="520" r="330" fill="none" stroke="rgba(255,255,255,0.055)" strokeWidth="1.5" strokeDasharray="4 16" />
             </g>
-            <g className="orb-spin-rev" style={{ transformOrigin: "520px 520px" }}>
-              <circle cx="520" cy="520" r="200" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="2 12" />
+
+            {/* MALHA NEURAL — gira junto com o círculo, opacidade baixa */}
+            <g className="orb-net" style={{ transformOrigin: "520px 520px" }} opacity={0.6}>
+              {/* linhas finas da malha */}
+              <g stroke="rgba(255,255,255,0.45)" strokeWidth="0.85" strokeLinecap="round">
+                {ORB_MESH.map(([i, j], k) => {
+                  const a = ORB_POINTS[i];
+                  const b = ORB_POINTS[j];
+                  return <line key={k} x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} />;
+                })}
+              </g>
+
+              {/* caminhos (invisíveis) para os pulsos */}
+              {ORB_PULSE_EDGES.map((k) => {
+                const a = ORB_POINTS[ORB_MESH[k][0]];
+                const b = ORB_POINTS[ORB_MESH[k][1]];
+                return (
+                  <path key={`mp${k}`} id={`m${k}`} d={`M${a[0]} ${a[1]} L${b[0]} ${b[1]}`} fill="none" stroke="none" />
+                );
+              })}
+
+              {/* partículas */}
+              <g fill="rgba(255,255,255,0.55)">
+                {ORB_PARTICLES.map(([x, y], i) => (
+                  <circle key={i} cx={x} cy={y} r={Math.round((1.4 + orbRand(i, 2) * 2) * 10) / 10} />
+                ))}
+              </g>
+
+              {/* números */}
+              <g
+                fill="rgba(255,255,255,0.26)"
+                fontFamily="ui-monospace, Menlo, Consolas, monospace"
+                fontSize="15"
+                fontWeight={600}
+              >
+                {ORB_NUMS.map((n, i) => (
+                  <text key={i} x={n.x} y={n.y}>
+                    {n.v}
+                  </text>
+                ))}
+              </g>
+
+              {/* pulsos viajantes */}
+              {ORB_PULSE_EDGES.map((k, n) => (
+                <circle key={`pc${n}`} r="2.1" fill="#ffffff" opacity="0">
+                  <animate
+                    attributeName="opacity"
+                    values="0;1;1;0"
+                    keyTimes="0;0.12;0.85;1"
+                    dur={`${2.6 + n * 0.7}s`}
+                    begin={`${n * 0.7}s`}
+                    repeatCount="indefinite"
+                  />
+                  <animateMotion dur={`${2.6 + n * 0.7}s`} begin={`${n * 0.7}s`} repeatCount="indefinite">
+                    <mpath href={`#m${k}`} />
+                  </animateMotion>
+                </circle>
+              ))}
+
+              {/* ícones pequenos */}
+              {ORB_NODES.map(([x, y], i) => (
+                <g key={`n${i}`} className="hi-node" style={{ animationDelay: `${i * 0.5}s` }}>
+                  <circle cx={x} cy={y} r="16.5" fill="#5672f8" />
+                  <circle cx={x} cy={y} r="16.5" fill="rgba(255,255,255,0.09)" stroke="rgba(255,255,255,0.55)" strokeWidth="1.1" />
+                  <g
+                    transform={`translate(${x - 9.6} ${y - 9.6}) scale(0.8)`}
+                    stroke="rgba(255,255,255,0.92)"
+                    strokeWidth="1.9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  >
+                    {ORB_ICONS[i]}
+                  </g>
+                </g>
+              ))}
             </g>
           </g>
         </svg>
@@ -1315,10 +1520,11 @@ function HomeScene({ onContato }: { onContato: () => void }) {
           position: "absolute",
           left: 123,
           top: 377,
-          width: 844,
+          width: 700,
           margin: 0,
           fontSize: fs(24),
           fontWeight: 700,
+          lineHeight: 1.35,
           color: "#6c6969",
         }}
       >
@@ -1355,7 +1561,7 @@ function HomeScene({ onContato }: { onContato: () => void }) {
 
       {/* Botão WhatsApp */}
       <a
-        className="hi-btn fx-cta"
+        className="hi-btn fx-cta fx-cta-blue"
         href={WPP}
         target="_blank"
         rel="noopener noreferrer"
@@ -1363,7 +1569,7 @@ function HomeScene({ onContato }: { onContato: () => void }) {
           position: "absolute",
           left: 123,
           top: 504,
-          width: 389,
+          width: 470,
           height: 77,
           borderRadius: 10,
           background: "#8d57f8",
@@ -1375,9 +1581,10 @@ function HomeScene({ onContato }: { onContato: () => void }) {
           fontSize: fs(24),
           fontWeight: 700,
           color: "#ffffff",
+          whiteSpace: "nowrap",
         }}
       >
-        Chamar no WhatsApp
+        Falar com um especialista
         <Wpp size={30} color="#ffffff" />
       </a>
 
@@ -1510,24 +1717,19 @@ function HomeScene({ onContato }: { onContato: () => void }) {
         </nav>
         <button
           type="button"
-          className="hi-contato"
+          className="fx-nav"
           onClick={onContato}
           style={{
             position: "absolute",
-            left: 1725,
-            top: 17,
-            width: 129,
-            height: 51,
+            left: 1737,
+            top: 28,
             border: 0,
-            borderRadius: 100,
-            background: "#ffffff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            padding: 0,
+            background: "transparent",
             fontFamily: "inherit",
-            fontSize: fs(22),
+            fontSize: fs(24),
             fontWeight: 700,
-            color: "#000000",
+            color: "#ffffff",
             cursor: "pointer",
           }}
         >

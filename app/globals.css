@@ -155,10 +155,14 @@ html {
 .orb-spin       { animation: hi-spin 90s linear infinite; }
 .orb-spin-rev   { animation: hi-spin-rev 70s linear infinite; }
 
+/* rede de sinapses do orb — gira junto com o círculo (linhas + nós + ícones) */
+.orb-net { animation: hi-spin 84s linear infinite; }
+
+/* nós da rede — pulsam suavemente, escalonados */
+@keyframes hi-node-pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.hi-node { animation: hi-node-pulse 4.5s ease-in-out infinite; }
+
 /* --- botão play: pulse contínuo + reação ao clique ("Ver serviços") --- */
-.hi-play {
-  transition: transform .28s cubic-bezier(.16, 1, .3, 1);
-}
 .hi-play::before {
   content: "";
   position: absolute;
@@ -167,8 +171,6 @@ html {
   animation: hi-play-pulse 2.8s ease-out infinite;
   pointer-events: none;
 }
-.hi-play:hover { transform: scale(1.05); }
-.hi-play:active { transform: scale(.97); }
 .hi-play-ring {
   position: absolute;
   inset: 0;
@@ -190,61 +192,60 @@ html {
   100% { opacity: 0; transform: scale(1.5); }
 }
 
-/* --- efeitos de hover modernos (Home / Serviços / Produtos) ------ */
+/* --- efeitos de hover (Home / Serviços / Produtos) --------------- *
+ *  Sem "alavancar": no máximo troca de cor e ganha sombra ao redor. */
 .fx-pill {
-  transition: transform .24s cubic-bezier(.16, 1, .3, 1), box-shadow .24s ease,
-    background-color .24s ease, color .24s ease;
+  transition: box-shadow .24s ease, background-color .24s ease, color .24s ease;
 }
 .fx-pill:hover {
-  transform: translateY(-3px) scale(1.035);
   box-shadow: 0 18px 36px -14px rgba(24, 20, 46, .42);
 }
-.fx-pill:active { transform: translateY(-1px) scale(.99); }
 .fx-pill[data-active="true"] { box-shadow: 0 16px 34px -12px rgba(141, 87, 248, .5); }
-.fx-pill[data-active="true"]:not(:hover) { transform: translateY(-2px); }
 
-/* variante "flat" (Serviços) — hover só troca a cor, sem levantar a pill */
+/* variante "flat" (Serviços) — hover só troca a cor */
 .fx-pill-flat,
 .fx-pill-flat:hover,
 .fx-pill-flat:active,
 .fx-pill-flat[data-active="true"],
 .fx-pill-flat[data-active="true"]:not(:hover) {
-  transform: none;
   box-shadow: 0 8px 22px -12px rgba(24, 20, 46, .3);
 }
 
-/* botão "Contato" do header — hover só troca a cor (fundo roxo, texto branco) */
-.hi-contato {
-  transition: background-color .22s ease, color .22s ease;
-}
-.hi-contato:hover {
-  background: #8d57f8 !important;
-  color: #ffffff !important;
-}
-
 .fx-cta {
-  transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+  transition: box-shadow .2s ease, filter .2s ease, background-color .2s ease,
+    color .2s ease;
 }
 .fx-cta:hover {
-  transform: translateY(-3px);
   box-shadow: 0 22px 46px -14px rgba(141, 87, 248, .6);
   filter: brightness(1.04);
 }
-.fx-cta:active { transform: translateY(-1px) scale(.986); }
+
+/* Home + Briefing: botão roxo → azul ao passar o mouse */
+.fx-cta-blue:hover {
+  background-color: #5672f8 !important;
+  box-shadow: 0 22px 46px -14px rgba(86, 114, 248, .6);
+  filter: none;
+}
+
+/* Fale conosco: botão branco → roxo ao passar o mouse (texto/ícone brancos) */
+.fx-cta-purple:hover {
+  background-color: #8d57f8 !important;
+  filter: none;
+}
+.fx-cta-purple:hover span { color: #fff !important; }
+.fx-cta-purple:hover svg { fill: #fff !important; }
 
 .fx-lift {
-  transition: transform .32s cubic-bezier(.16, 1, .3, 1), box-shadow .32s ease;
+  transition: box-shadow .32s ease;
 }
 .fx-lift:hover {
-  transform: translateY(-8px);
   box-shadow: 0 44px 84px -26px rgba(24, 20, 46, .5);
 }
 
 .fx-mock {
-  transition: transform .38s cubic-bezier(.16, 1, .3, 1), filter .38s ease;
+  transition: filter .38s ease;
 }
 .fx-mock:hover {
-  transform: translateY(-8px) rotate(-.35deg);
   filter: drop-shadow(0 34px 52px rgba(24, 20, 46, .28));
 }
 
@@ -383,10 +384,13 @@ html {
   .hero-orb-inner,
   .orb-spin,
   .orb-spin-rev,
+  .orb-net,
+  .hi-node,
   .hi-serv-track,
   .section-arrive::after {
     animation: none !important;
   }
+  .hi-node { opacity: .85 !important; }
   .fx-pill:hover,
   .fx-cta:hover,
   .fx-lift:hover,

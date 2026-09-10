@@ -62,7 +62,7 @@ export default function RootLayout({
             <span className="sk" style={{ left: 1272, top: 46, width: 64, height: 18 }} />
             <span className="sk" style={{ left: 1400, top: 46, width: 92, height: 18 }} />
             <span className="sk" style={{ left: 1566, top: 46, width: 92, height: 18 }} />
-            <span className="sk" style={{ left: 1725, top: 17, width: 129, height: 51, borderRadius: 100 }} />
+            <span className="sk" style={{ left: 1737, top: 46, width: 92, height: 18 }} />
 
             {/* título */}
             <span className="sk" style={{ left: 120, top: 182, width: 660, height: 50 }} />
@@ -74,7 +74,7 @@ export default function RootLayout({
             <span className="sk" style={{ left: 123, top: 438, width: 560, height: 22 }} />
 
             {/* botão WhatsApp */}
-            <span className="sk" style={{ left: 123, top: 504, width: 389, height: 77, borderRadius: 10 }} />
+            <span className="sk" style={{ left: 123, top: 504, width: 470, height: 77, borderRadius: 10 }} />
 
             {/* logo circle no canto direito */}
             <span className="sk" style={{ left: 1361, top: 153, width: 136, height: 136, borderRadius: "50%" }} />
