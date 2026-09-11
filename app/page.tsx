@@ -15,13 +15,13 @@ const CANVAS_W = 1920;
 const FS = 0.74;
 const fs = (n: number) => Math.round(n * FS * 10) / 10;
 
-const HOME_H = 1083;
+const HOME_H = 987;
 const SERV_H = 1083;
 const BRIEF_H = 900;
 const PROD_H = 1083;
 const FECH_H = 760;
 const FOOT_H = 289;
-const CANVAS_H = HOME_H + SERV_H + BRIEF_H + PROD_H + FECH_H + FOOT_H; // 5198
+const CANVAS_H = HOME_H + SERV_H + BRIEF_H + PROD_H + FECH_H + FOOT_H; // 5102
 
 /* --- WhatsApp glyph ------------------------------------------------ */
 function Wpp({ size = 24, color = "currentColor" }: { size?: number; color?: string }) {
@@ -36,71 +36,6 @@ function Wpp({ size = 24, color = "currentColor" }: { size?: number; color?: str
     >
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.454 5.709 1.455h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
-  );
-}
-
-/* --- Faixa de código (Frame 4) ----------------------------------- */
-type Tok = { t: string; l: number; y: number; s: number; o: number; c: string; b?: boolean };
-const TOKENS: Tok[] = [
-  { t: "{ }", l: 30, y: 27, s: 28, o: 0.2, c: "#8d57f8", b: true },
-  { t: "const dev = () => {", l: 150, y: 13.5, s: 14, o: 0.15, c: "#8d57f8" },
-  { t: "[ ]", l: 350, y: 69.5, s: 32, o: 0.2, c: "#56b6c2", b: true },
-  { t: "</>", l: 480, y: 30.5, s: 26, o: 0.18, c: "#e06c75", b: true },
-  { t: "function()", l: 560, y: 62.5, s: 12, o: 0.13, c: "#61afef" },
-  { t: "{ code }", l: 700, y: 20, s: 20, o: 0.2, c: "#8d57f8" },
-  { t: "if (true) {", l: 830, y: 58, s: 13, o: 0.15, c: "#8d57f8" },
-  { t: "< / >", l: 960, y: 38, s: 30, o: 0.2, c: "#e06c75" },
-  { t: "[ ... ]", l: 1080, y: 66, s: 18, o: 0.18, c: "#56b6c2" },
-  { t: "return { };", l: 1180, y: 18.5, s: 14, o: 0.15, c: "#8d57f8" },
-  { t: "{ => }", l: 1320, y: 62.5, s: 24, o: 0.2, c: "#8d57f8" },
-  { t: "import { }", l: 1440, y: 16, s: 13, o: 0.13, c: "#8d57f8" },
-  { t: "( )", l: 1550, y: 72, s: 28, o: 0.2, c: "#61afef", b: true },
-  { t: "export default", l: 1620, y: 25.5, s: 12, o: 0.13, c: "#8d57f8" },
-  { t: "{ [ ] }", l: 1770, y: 58.5, s: 22, o: 0.2, c: "#8d57f8" },
-  { t: "&&", l: 90, y: 67, s: 20, o: 0.15, c: "#56b6c2", b: true },
-  { t: "===", l: 250, y: 41, s: 18, o: 0.18, c: "#56b6c2", b: true },
-  { t: "// dev", l: 420, y: 46.5, s: 11, o: 0.13, c: "#98c379" },
-  { t: "=>", l: 650, y: 59.5, s: 24, o: 0.2, c: "#56b6c2", b: true },
-  { t: "{ ... }", l: 1850, y: 21.5, s: 16, o: 0.18, c: "#8d57f8" },
-  { t: "#!/bin", l: 1000, y: 11.5, s: 11, o: 0.1, c: "#98c379" },
-  { t: "npm run", l: 1250, y: 66.5, s: 11, o: 0.1, c: "#e5c07b" },
-  { t: "<<", l: 50, y: 47.5, s: 16, o: 0.15, c: "#56b6c2", b: true },
-  { t: ">>", l: 1900, y: 74.5, s: 16, o: 0.15, c: "#56b6c2", b: true },
-  { t: "/* */", l: 770, y: 68.5, s: 14, o: 0.13, c: "#98c379" },
-];
-
-function CodeStrip({ top }: { top: number }) {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: 0,
-        top,
-        width: CANVAS_W,
-        height: 96,
-        background: "#d2d3da",
-        overflow: "hidden",
-      }}
-    >
-      {TOKENS.map((k, i) => (
-        <span
-          key={i}
-          style={{
-            position: "absolute",
-            left: k.l,
-            top: k.y,
-            transform: "translateY(-50%)",
-            fontSize: k.s,
-            fontWeight: k.b ? 700 : 400,
-            color: k.c,
-            opacity: k.o,
-            whiteSpace: "nowrap",
-          }}
-        >
-          {k.t}
-        </span>
-      ))}
-    </div>
   );
 }
 
@@ -1706,9 +1641,6 @@ function HomeScene({ onContato }: { onContato: () => void }) {
           <MiniChart active={entered} />
         </div>
       </div>
-
-      {/* Faixa de código */}
-      <CodeStrip top={987} />
 
       {/* HEADER (sobreposto) */}
       <header style={{ position: "absolute", left: 0, top: 0, width: CANVAS_W, height: 144, zIndex: 30 }}>
