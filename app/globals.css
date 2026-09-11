@@ -754,18 +754,10 @@ html[data-ready] #page-preloader {
   padding: 30px 20px 46px;
   background: #fff;
 }
-.m-hero-orb {
-  position: absolute;
-  top: -120px;
-  right: -140px;
-  width: 340px;
-  height: 340px;
-  border-radius: 50%;
-  background: #5672f8;
-  opacity: 0.16;
-  pointer-events: none;
+.m-hero-orb-live {
+  opacity: 0.9;
 }
-.m-hero > *:not(.m-hero-orb) {
+.m-hero > *:not(.m-hero-orb-live) {
   position: relative;
   z-index: 1;
 }
@@ -953,8 +945,8 @@ html[data-ready] #page-preloader {
 .m-prod[data-prod="finance"] {
   background: #171e57;
 }
-.m-prod[data-prod="lucena"] {
-  background: #290002;
+.m-prod[data-prod="clock"] {
+  background: #062219;
 }
 .m-prod h2 {
   color: #fff;

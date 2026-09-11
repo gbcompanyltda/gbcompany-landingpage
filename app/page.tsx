@@ -171,7 +171,7 @@ function useIsMobile() {
  * ================================================================= */
 export default function Page() {
   const [servTab, setServTab] = useState<"mobile" | "webapp" | "desktop" | "landing" | "saas">("webapp");
-  const [prodTab, setProdTab] = useState<"finance" | "lucena">("finance");
+  const [prodTab, setProdTab] = useState<"finance" | "clock">("finance");
   const [contatoOpen, setContatoOpen] = useState(false);
   const isMobile = useIsMobile();
 
@@ -187,7 +187,7 @@ export default function Page() {
     const s = q.get("serv");
     const p = q.get("prod");
     if (s === "mobile" || s === "webapp" || s === "desktop" || s === "landing" || s === "saas") setServTab(s);
-    if (p === "finance" || p === "lucena") setProdTab(p);
+    if (p === "finance" || p === "clock") setProdTab(p);
   }, []);
 
   // rede de segurança: garante que a página apareça mesmo se o "load" demorar
@@ -427,7 +427,7 @@ export default function Page() {
             top: HOME_H + SERV_H + BRIEF_H,
             width: CANVAS_W,
             height: PROD_H,
-            background: prodTab === "finance" ? "#171e57" : "#290002",
+            background: prodTab === "finance" ? "#171e57" : "#062219",
             overflow: "hidden",
             transition: "background .4s",
           }}
@@ -514,12 +514,12 @@ export default function Page() {
                       fontSize: fs(21),
                       lineHeight: 1.42,
                       fontWeight: 700,
-                      color: prodTab === "finance" ? "#171e57" : "#6b0f14",
+                      color: prodTab === "finance" ? "#171e57" : "#0a6b46",
                     }}
                   >
                     {prodTab === "finance"
                       ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
-                      : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
+                      : "Plataforma GBclock: controle o ponto e o banco de horas da equipe. Registre entradas, intervalos e saídas, acompanhe saldos em tempo real e organize a escala, tudo em um painel único."}
                   </p>
                 </div>
               </div>
@@ -710,7 +710,7 @@ function ContactModal({ open, onClose }: { open: boolean; onClose: () => void })
  * ================================================================= */
 const PROD_BETA: Record<string, boolean> = {
   finance: true,
-  lucena: true,
+  clock: true,
 };
 
 /* ================================================================= *
@@ -941,7 +941,7 @@ function ServiceMockups({ tab, setTab }: { tab: ServTab; setTab: (t: ServTab) =>
 }
 
 /* --- Mockups de Produtos (coluna direita) --------------------- */
-function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
+function ProductShowcase({ tab }: { tab: "finance" | "clock" }) {
   return (
     <div style={{ flex: 1, height: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div
@@ -951,13 +951,13 @@ function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
       >
         {tab === "finance" ? (
           <>
-            <img className="fx-mock" src={A("mockup-finance-1.png")} alt="App Finance" style={{ height: 403, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="App Finance" style={{ height: 403, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("finance-logo.png")} alt="Logo Finance" style={{ height: 200, width: "auto", display: "block", alignSelf: "center", borderRadius: 40 }} />
+            <img className="fx-mock" src={A("mockup-finance-2.png")} alt="Dashboard do app Finance" style={{ height: 403, width: "auto", display: "block" }} />
           </>
         ) : (
           <>
-            <img className="fx-mock" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ height: 330, width: "auto", display: "block" }} />
-            <img className="fx-mock" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ height: 403, width: "auto", display: "block" }} />
+            <img className="fx-mock" src={A("gbclock-logo.png")} alt="Logo GBclock" style={{ height: 200, width: "auto", display: "block", alignSelf: "center" }} />
+            <img className="fx-mock" src={A("mockup-clock-laptop.png")} alt="Dashboard GBclock com banco de horas" style={{ height: 330, width: "auto", display: "block" }} />
           </>
         )}
       </div>
@@ -966,7 +966,7 @@ function ProductShowcase({ tab }: { tab: "finance" | "lucena" }) {
 }
 
 /* --- Pills de Produtos — uma ao lado da outra, acima do cardbox - */
-function ProductPills({ tab, setTab }: { tab: "finance" | "lucena"; setTab: (t: "finance" | "lucena") => void }) {
+function ProductPills({ tab, setTab }: { tab: "finance" | "clock"; setTab: (t: "finance" | "clock") => void }) {
   const pill: React.CSSProperties = {
     height: 52,
     borderRadius: 100,
@@ -986,12 +986,12 @@ function ProductPills({ tab, setTab }: { tab: "finance" | "lucena"; setTab: (t: 
     <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
       <div
         className="fx-pill"
-        data-active={tab === "lucena"}
-        onMouseEnter={() => setTab("lucena")}
-        onClick={() => setTab("lucena")}
-        style={{ ...pill, background: tab === "lucena" ? "#6b0f14" : "#fff", color: tab === "lucena" ? "#fff" : "#6b0f14" }}
+        data-active={tab === "clock"}
+        onMouseEnter={() => setTab("clock")}
+        onClick={() => setTab("clock")}
+        style={{ ...pill, background: tab === "clock" ? "#0a6b46" : "#fff", color: tab === "clock" ? "#fff" : "#0a6b46" }}
       >
-        Rede Lucena
+        GBclock
       </div>
       <div
         className="fx-pill"
@@ -1283,6 +1283,28 @@ function HeroOrb() {
       className="hi-orb"
       style={{ position: "absolute", left: 880, top: -300, width: 1040, height: 1040, pointerEvents: "none" }}
     >
+      <HeroOrbVisual />
+    </div>
+  );
+}
+
+/* Versão compacta do mesmo orb, reaproveitada no hero mobile — mesma malha
+   neural (viewBox fixo, escala junto com o tamanho do contêiner) + logo
+   girando no centro. */
+function MobileHeroOrb() {
+  return (
+    <div
+      className="m-hero-orb-live"
+      style={{ position: "absolute", top: -96, right: -96, width: 300, height: 300, pointerEvents: "none" }}
+    >
+      <HeroOrbVisual showLogo />
+    </div>
+  );
+}
+
+function HeroOrbVisual({ showLogo = false }: { showLogo?: boolean }) {
+  return (
+    <>
       <div className="hero-orb-inner" style={{ position: "absolute", inset: 0 }}>
         <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "#5672f8" }} />
         <svg viewBox="0 0 1040 1040" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
@@ -1377,7 +1399,29 @@ function HeroOrb() {
           </g>
         </svg>
       </div>
-    </div>
+      {showLogo && (
+        <div
+          className="hi-logo-mini"
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            width: 74,
+            height: 74,
+            marginLeft: -37,
+            marginTop: -37,
+            borderRadius: "50%",
+            background: "#fff",
+            boxShadow: "0 10px 26px -8px rgba(0,0,0,.35)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img className="hi-logo-img" src={A("logo.png")} alt="GB Company" style={{ width: 46, height: 46 }} />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -1735,18 +1779,18 @@ function MobileServiceMocks({ tab, avail }: { tab: ServTab; avail: number }) {
   );
 }
 
-function MobileProductMocks({ tab }: { tab: "finance" | "lucena" }) {
+function MobileProductMocks({ tab }: { tab: "finance" | "clock" }) {
   return (
     <div className="m-mocks">
       {tab === "finance" ? (
         <>
-          <img className="m-mock-img" src={A("mockup-finance-1.png")} alt="App Finance" />
-          <img className="m-mock-img" src={A("mockup-finance-2.png")} alt="App Finance" />
+          <img className="m-mock-img" src={A("finance-logo.png")} alt="Logo Finance" style={{ width: 84, maxWidth: "28%", borderRadius: 20, alignSelf: "flex-start" }} />
+          <img className="m-mock-img m-mock-solo" src={A("mockup-finance-2.png")} alt="Dashboard do app Finance" style={{ alignSelf: "center" }} />
         </>
       ) : (
         <>
-          <img className="m-mock-img m-mock-full" src={A("mockup-lucena-laptop.png")} alt="Painel Rede Lucena" style={{ maxWidth: "80%" }} />
-          <img className="m-mock-img" src={A("mockup-lucena-phone.png")} alt="App Rede Lucena" style={{ maxWidth: "40%" }} />
+          <img className="m-mock-img" src={A("gbclock-logo.png")} alt="Logo GBclock" style={{ width: 84, maxWidth: "28%", alignSelf: "center" }} />
+          <img className="m-mock-img" src={A("mockup-clock-laptop.png")} alt="Dashboard GBclock com banco de horas" style={{ maxWidth: "62%", width: "auto", alignSelf: "center" }} />
         </>
       )}
     </div>
@@ -1764,8 +1808,8 @@ function MobileSite({
   onContato: () => void;
   servTab: ServTab;
   pickServ: (t: ServTab) => void;
-  prodTab: "finance" | "lucena";
-  setProdTab: (t: "finance" | "lucena") => void;
+  prodTab: "finance" | "clock";
+  setProdTab: (t: "finance" | "clock") => void;
   lastSoftware: React.RefObject<"mobile" | "webapp" | "desktop">;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -1778,7 +1822,7 @@ function MobileSite({
     goToSection(id, e);
   };
 
-  const prodAccent = prodTab === "finance" ? "#171e57" : "#6b0f14";
+  const prodAccent = prodTab === "finance" ? "#171e57" : "#0a6b46";
 
   return (
     <div className="m-site">
@@ -1804,7 +1848,7 @@ function MobileSite({
 
       {/* ---------- HERO ---------- */}
       <section className="m-hero" id="home">
-        <span className="m-hero-orb" />
+        <MobileHeroOrb />
         <div className="m-inner">
           <h1>Software sob medida para o seu negócio crescer</h1>
           <p className="m-lead">
@@ -1884,11 +1928,11 @@ function MobileSite({
             <button
               type="button"
               className="m-pill"
-              data-active={prodTab === "lucena"}
-              style={prodTab === "lucena" ? { background: "#fff", color: prodAccent } : undefined}
-              onClick={() => setProdTab("lucena")}
+              data-active={prodTab === "clock"}
+              style={prodTab === "clock" ? { background: "#fff", color: prodAccent } : undefined}
+              onClick={() => setProdTab("clock")}
             >
-              Rede Lucena
+              GBclock
             </button>
             <button
               type="button"
@@ -1905,7 +1949,7 @@ function MobileSite({
             <p key={prodTab} className="anim-fade" style={{ color: prodAccent }}>
               {prodTab === "finance"
                 ? 'App de controle financeiro mês a mês. Acompanhe o saldo disponível, contas, receitas e despesas (fixas e variáveis), com orçamento de gastos, metas de "guardar" e análises visuais.'
-                : "Plataforma Rede Lucena: App nativo para clientes fazerem pedidos e acompanharem entregas; no painel web a rede gere estoque, campanhas e financeiro."}
+                : "Plataforma GBclock: controle o ponto e o banco de horas da equipe. Registre entradas, intervalos e saídas, acompanhe saldos em tempo real e organize a escala, tudo em um painel único."}
             </p>
           </div>
 
