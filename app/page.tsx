@@ -299,9 +299,6 @@ export default function Page() {
           <h2 style={{ position: "absolute", left: 120, top: 52, width: 900, margin: 0, fontSize: fs(52), lineHeight: 1.08, fontWeight: 700, color: "#000" }}>
             Nossos principais serviços
           </h2>
-          <p style={{ position: "absolute", left: 123, top: 130, width: 620, margin: 0, fontSize: fs(20), lineHeight: 1.4, fontWeight: 700, color: "#000" }}>
-            Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
-          </p>
 
           {/* Duas colunas centralizadas na mesma linha horizontal */}
           <div
@@ -681,13 +678,6 @@ export default function Page() {
           </p>
 
           {/* Redes */}
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ position: "absolute", left: 1561, top: 121, width: 48, height: 48, color: "#8d57f8" }}>
-            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="2" width="20" height="20" rx="5.5" />
-              <circle cx="12" cy="12" r="4.2" />
-              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
-            </svg>
-          </a>
           <a href={`mailto:${"gbcompanyltda@gmail.com"}`} aria-label="E-mail" style={{ position: "absolute", left: 1638, top: 121, width: 48, height: 48, color: "#5672f8" }}>
             <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
@@ -711,7 +701,6 @@ export default function Page() {
  *  Modal de contato — abre pelo botão "Contato" do header            *
  * ================================================================= */
 const MAIL = "gbcompanyltda@gmail.com";
-const IG_URL = "https://instagram.com/gbcompany";
 
 function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [mounted, setMounted] = useState(open);
@@ -776,19 +765,6 @@ function ContactModal({ open, onClose }: { open: boolean; onClose: () => void })
           </span>
         </a>
 
-        <a className="cm-row" href={IG_URL} target="_blank" rel="noopener noreferrer" onClick={onClose}>
-          <span className="cm-ico">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="2" width="20" height="20" rx="5.5" />
-              <circle cx="12" cy="12" r="4.2" />
-              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
-            </svg>
-          </span>
-          <span>
-            <span className="cm-row-label">Instagram</span>
-            <span className="cm-row-value">@gbcompany</span>
-          </span>
-        </a>
       </div>
     </div>
   );
@@ -1918,9 +1894,6 @@ function MobileSite({
       <section className="m-sec m-serv" id="servicos">
         <div className="m-inner">
           <h2>Nossos principais serviços</h2>
-          <p className="m-lead">
-            Transforme ideias em sistemas que dão produtividade e potencializam a sua empresa
-          </p>
 
           <div className="m-pills">
             <button type="button" className="m-pill" data-active={isSoftware} onClick={() => pickServ(lastSoftware.current)}>
@@ -2027,13 +2000,6 @@ function MobileSite({
         </p>
         <p className="m-verse-ref">João 8:12</p>
         <div className="m-social">
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: "#8d57f8" }}>
-            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="2" y="2" width="20" height="20" rx="5.5" />
-              <circle cx="12" cy="12" r="4.2" />
-              <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none" />
-            </svg>
-          </a>
           <a href={`mailto:${MAIL}`} aria-label="E-mail" style={{ color: "#5672f8" }}>
             <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2.5" y="4.5" width="19" height="15" rx="2.5" />
