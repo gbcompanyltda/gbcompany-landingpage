@@ -635,6 +635,16 @@ html[data-ready] #page-preloader {
     margin: -36px 0 0 -36px;
     animation: hi-node-pulse 1.4s ease-in-out infinite;
   }
+
+  /* esconde a barra de rolagem no layout mobile (o thumb roxo é coisa de desktop) */
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 .m-site {
